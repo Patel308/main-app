@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="transparent"/>
+  <text x="50%" y="42%" font-family="'Space Grotesk', sans-serif" font-weight="900" font-size="180" dominant-baseline="middle" text-anchor="middle" letter-spacing="-8">
+    <tspan fill="#FF1F1F">SC</tspan><tspan fill="#020617">ALLAR</tspan>
+  </text>
+  <text x="50%" y="65%" font-family="'Space Grotesk', sans-serif" font-weight="900" font-size="52" fill="#0054D2" dominant-baseline="middle" text-anchor="middle" letter-spacing="18">
+    IT SOLUTION
+  </text>
+</svg>
