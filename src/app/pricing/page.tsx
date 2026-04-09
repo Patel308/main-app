@@ -1,23 +1,29 @@
-// ✅ PURE SERVER COMPONENT — 'use client' removed entirely
+// ✅ PURE SERVER COMPONENT — includes FAQ JSON-LD for rich results
 import type { Metadata } from 'next';
 import { Check, X } from 'lucide-react';
 import Link from 'next/link';
 import Button from '@/components/Button';
+import { PricingFaqJsonLd } from '@/components/JsonLd';
 
 export const metadata: Metadata = {
-  title: 'Pricing Plans | Digital Marketing & AI Services | Scallar IT Solution',
+  title: 'Pricing Plans | Digital Marketing & AI Services',
   description:
     'Transparent pricing for SEO, Google Ads, WhatsApp Automation, Web Development, and AI Services. Plans starting from ₹19,999/month. Get a free audit today.',
   keywords:
     'digital marketing pricing india, seo packages noida, web development cost india, ai automation pricing, scallar it solution plans',
+  alternates: { canonical: 'https://scallar.in/pricing' },
   openGraph: {
     title: 'Pricing Plans | Scallar IT Solution',
     description: 'Transparent plans starting from ₹19,999/month. Get a free audit today.',
     type: 'website',
+    url: 'https://scallar.in/pricing',
     siteName: 'Scallar IT Solution',
+    images: [{ url: 'https://scallar.in/og-image.png', width: 1200, height: 630 }],
   },
-  alternates: {
-    canonical: 'https://scallar.in/pricing',
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Pricing Plans | Scallar IT Solution',
+    description: 'Transparent digital marketing plans from ₹19,999/month.',
   },
 };
 
@@ -91,80 +97,79 @@ const PLANS = [
 
 export default function PricingPage() {
   return (
-    <div className="w-full min-h-screen bg-brand-bg pt-24 md:pt-32 pb-20">
+    <>
+      <PricingFaqJsonLd />
+      <div className="w-full min-h-screen bg-brand-bg pt-24 md:pt-32 pb-20">
 
-      <section className="px-4 md:px-6 mb-16">
-        <div className="max-w-[1400px] mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-brand-dark mb-4">
-            Simple, Transparent <span className="text-brand-lime">Pricing</span>
-          </h1>
-          <p className="text-gray-500 text-lg max-w-2xl mx-auto">
-            Choose the perfect plan for your business growth. All plans include dedicated support.
-          </p>
-        </div>
-      </section>
+        <section className="px-4 md:px-6 mb-16">
+          <div className="max-w-[1400px] mx-auto text-center">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-brand-dark mb-4">
+              Simple, Transparent <span className="text-brand-lime">Pricing</span>
+            </h1>
+            <p className="text-gray-500 text-lg max-w-2xl mx-auto">
+              Choose the perfect plan for your business growth. All plans include dedicated support.
+            </p>
+          </div>
+        </section>
 
-      <section className="px-4 md:px-6">
-        <div className="max-w-[1400px] mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {PLANS.map((plan, idx) => (
-            <div
-              key={idx}
-              className={`bg-white rounded-[2.5rem] p-6 md:p-8 flex flex-col relative ${
-                plan.isPopular ? 'ring-2 ring-brand-lime shadow-2xl scale-105' : 'shadow-lg'
-              }`}
-            >
-              {plan.isPopular && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-brand-lime text-white px-4 py-1 rounded-full text-sm font-bold">
-                  Most Popular
-                </div>
-              )}
-
-              <div className="text-center mb-6">
-                <h3 className="text-2xl font-bold text-brand-dark mb-2">{plan.name}</h3>
-                <p className="text-gray-500 text-sm">{plan.tagline}</p>
-              </div>
-
-              <div className="text-center mb-6">
-                <div className="flex items-center justify-center gap-2">
-                  {plan.originalPrice && (
-                    <span className="text-gray-400 line-through">{plan.originalPrice}</span>
-                  )}
-                  <span className="text-4xl font-bold text-brand-dark">{plan.price}</span>
-                </div>
-                {plan.discount && (
-                  <span className="inline-block mt-2 bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-bold">
-                    {plan.discount}
-                  </span>
+        <section className="px-4 md:px-6">
+          <div className="max-w-[1400px] mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {PLANS.map((plan, idx) => (
+              <div
+                key={idx}
+                className={`bg-white rounded-[2.5rem] p-6 md:p-8 flex flex-col relative ${
+                  plan.isPopular ? 'ring-2 ring-brand-lime shadow-2xl scale-105' : 'shadow-lg'
+                }`}
+              >
+                {plan.isPopular && (
+                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-brand-lime text-white px-4 py-1 rounded-full text-sm font-bold">
+                    Most Popular
+                  </div>
                 )}
-              </div>
-
-              <div className="flex-grow space-y-3 mb-6">
-                {plan.features.map((feature, i) => (
-                  <div key={i} className="flex items-center gap-2">
-                    <Check size={16} className="text-green-500 shrink-0" />
-                    <span className="text-sm text-gray-600">{feature}</span>
+                <div className="text-center mb-6">
+                  <h3 className="text-2xl font-bold text-brand-dark mb-2">{plan.name}</h3>
+                  <p className="text-gray-500 text-sm">{plan.tagline}</p>
+                </div>
+                <div className="text-center mb-6">
+                  <div className="flex items-center justify-center gap-2">
+                    {plan.originalPrice && (
+                      <span className="text-gray-400 line-through">{plan.originalPrice}</span>
+                    )}
+                    <span className="text-4xl font-bold text-brand-dark">{plan.price}</span>
                   </div>
-                ))}
-                {plan.missing.map((feature, i) => (
-                  <div key={i} className="flex items-center gap-2">
-                    <X size={16} className="text-gray-300 shrink-0" />
-                    <span className="text-sm text-gray-400">{feature}</span>
-                  </div>
-                ))}
+                  {plan.discount && (
+                    <span className="inline-block mt-2 bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-bold">
+                      {plan.discount}
+                    </span>
+                  )}
+                </div>
+                <div className="flex-grow space-y-3 mb-6">
+                  {plan.features.map((feature, i) => (
+                    <div key={i} className="flex items-center gap-2">
+                      <Check size={16} className="text-green-500 shrink-0" />
+                      <span className="text-sm text-gray-600">{feature}</span>
+                    </div>
+                  ))}
+                  {plan.missing.map((feature, i) => (
+                    <div key={i} className="flex items-center gap-2">
+                      <X size={16} className="text-gray-300 shrink-0" />
+                      <span className="text-sm text-gray-400">{feature}</span>
+                    </div>
+                  ))}
+                </div>
+                <Link href="/contact">
+                  <Button
+                    className="w-full rounded-full"
+                    variant={plan.isPopular ? 'brand' : 'outline'}
+                  >
+                    Get Started
+                  </Button>
+                </Link>
               </div>
-
-              <Link href="/contact">
-                <Button
-                  className="w-full rounded-full"
-                  variant={plan.isPopular ? 'brand' : 'outline'}
-                >
-                  Get Started
-                </Button>
-              </Link>
-            </div>
-          ))}
-        </div>
-      </section>
-    </div>
+            ))}
+          </div>
+        </section>
+      </div>
+    </>
   );
 }
