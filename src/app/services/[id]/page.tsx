@@ -1,28 +1,21 @@
-// ✅ SERVER COMPONENT — No 'use client' here
-// Google can crawl this page. Static HTML generated at build time.
-
+// ✅ SERVER COMPONENT — SSG + per-page metadata + JSON-LD
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { SERVICES } from '@/constants/constants';
 import ServiceDetailClient from './ServiceDetailClient';
+import { ServiceJsonLd } from '@/components/JsonLd';
 
-// ─── 1. Tell Next.js which [id] values to pre-render at build time ───────────
 export async function generateStaticParams() {
   return SERVICES.map((service) => ({ id: service.id }));
 }
 
-// ─── 2. Dynamic per-page SEO metadata ────────────────────────────────────────
 export async function generateMetadata(
   { params }: { params: Promise<{ id: string }> }
 ): Promise<Metadata> {
   const { id } = await params;
   const service = SERVICES.find((s) => s.id === id);
 
-  if (!service) {
-    return {
-      title: 'Service Not Found | Scallar IT Solution',
-    };
-  }
+  if (!service) return { title: 'Service Not Found' };
 
   const title = `${service.title} | Scallar IT Solution`;
   const description = `${service.description} Scallar IT Solution offers professional ${service.title.toLowerCase()} in Noida, Delhi NCR and across India. Get a free consultation today.`;
@@ -39,10 +32,12 @@ export async function generateMetadata(
     title,
     description,
     keywords,
+    alternates: { canonical: `https://scallar.in/services/${id}` },
     openGraph: {
       title,
       description,
       type: 'website',
+      url: `https://scallar.in/services/${id}`,
       siteName: 'Scallar IT Solution',
       images: service.image ? [{ url: service.image, width: 800, height: 600 }] : [],
     },
@@ -50,16 +45,11 @@ export async function generateMetadata(
       card: 'summary_large_image',
       title,
       description,
-    },
-    alternates: {
-      canonical: `https://scallar.in/services/${id}`,
+      images: service.image ? [service.image] : [],
     },
   };
 }
 
-// ─── 3. Page Component (Server) ───────────────────────────────────────────────
-// Finds the service here on the server, passes it down as a plain prop.
-// No useParams() needed — Next.js injects params directly.
 export default async function ServiceDetailPage(
   { params }: { params: Promise<{ id: string }> }
 ) {
@@ -68,5 +58,16 @@ export default async function ServiceDetailPage(
 
   if (!service) notFound();
 
-  return <ServiceDetailClient service={service} />;
+  return (
+    <>
+      {/* Service-specific JSON-LD */}
+      <ServiceJsonLd
+        name={service.title}
+        description={service.description}
+        url={`https://scallar.in/services/${id}`}
+        image={service.image}
+      />
+      <ServiceDetailClient service={service} />
+    </>
+  );
 }

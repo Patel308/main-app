@@ -208,7 +208,7 @@ export const SERVICES: Service[] = [
     title: 'E-commerce Solutions',
     description: 'Scalable online stores built on Shopify, WooCommerce, or custom stacks to maximize sales.',
     icon: 'ShoppingCart',
-    image: 'https://images.unsplash.com/photo-1556742102-fab959496470?auto=format&fit=crop&w=800',
+    image: 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=800',
     features: [
       'Shopify & WooCommerce',
       'Custom Cart Development',
