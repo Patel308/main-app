@@ -1,14 +1,14 @@
 
 import { Service, CaseStudy, BookingSlot, Resource, TeamMember } from '../types/types';
-
 export const NAV_LINKS = [
-  { name: 'Home', path: '/' },
-  { name: 'Service', path: '/services' },
-  { name: 'Pricing', path: '/pricing' },
-  { name: 'Team', path: '/team' },
-  { name: 'Project', path: '/portfolio' },
-  { name: 'Blog', path: '/resources' },
-  { name: 'Contact', path: '/contact' },
+  { name: 'Home',       path: '/'           },
+  { name: 'Services',   path: '/services'   },
+  { name: 'Industries', path: '/industries' },
+  { name: 'Blog',       path: '/blog'       },
+  { name: 'Pricing',    path: '/pricing'    },
+  { name: 'Team',       path: '/team'       },
+  { name: 'Project',    path: '/portfolio'  },
+  { name: 'Contact',    path: '/contact'    },
 ];
 
 export const TESTIMONIALS = [

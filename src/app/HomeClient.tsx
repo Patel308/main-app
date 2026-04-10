@@ -467,6 +467,128 @@ export default function HomeClient() {
         </div>
       </section>
 
+      {/* ── Blog Section — links to /blog ─────────────────────────────────── */}
+      <section className="py-16 md:py-24 px-4 md:px-6 bg-white">
+        <div className="max-w-[1400px] mx-auto">
+          <RevealOnScroll variant="up">
+            <div className="flex flex-col md:flex-row justify-between items-end mb-10 gap-6">
+              <div>
+                <span className="text-brand-lime font-bold tracking-wider uppercase text-xs md:text-sm mb-2 block">From the Blog</span>
+                <h2 className="text-3xl md:text-4xl font-display font-bold text-brand-dark">
+                  Insights & Strategies
+                </h2>
+              </div>
+              <Link href="/blog" className="inline-flex items-center gap-2 font-bold text-brand-dark hover:text-brand-lime transition-colors shrink-0">
+                View all posts <ArrowRight size={16} />
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {[
+                { slug: 'seo-tips-2025',              title: 'Top 10 SEO Strategies That Actually Work in 2025',              category: 'SEO',          image: 'https://images.unsplash.com/photo-1571786256017-aee7a0c009b6?auto=format&fit=crop&w=800' },
+                { slug: 'whatsapp-automation-business', title: 'How WhatsApp Automation Is Transforming Indian Businesses',      category: 'AI Automation', image: 'https://images.unsplash.com/photo-1611746872915-64382b5c76da?auto=format&fit=crop&w=800' },
+                { slug: 'google-ads-guide-2025',       title: 'Google Ads in 2025: Run Profitable Campaigns Without Waste',    category: 'Marketing',    image: 'https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?auto=format&fit=crop&w=800' },
+              ].map((post) => (
+                <Link key={post.slug} href={`/blog/${post.slug}`} className="group bg-brand-bg rounded-[2rem] overflow-hidden hover:shadow-xl hover:-translate-y-2 transition-all">
+                  <div className="h-48 overflow-hidden relative">
+                    <Image src={post.image} alt={post.title} fill className="object-cover group-hover:scale-110 transition-transform duration-700" unoptimized />
+                  </div>
+                  <div className="p-6">
+                    <span className="text-xs font-bold text-brand-lime uppercase tracking-wide">{post.category}</span>
+                    <h3 className="font-bold text-brand-dark mt-2 mb-3 group-hover:text-brand-lime transition-colors line-clamp-2 leading-snug">{post.title}</h3>
+                    <span className="inline-flex items-center gap-1 text-sm font-bold text-gray-400 group-hover:gap-2 transition-all">Read more <ArrowRight size={13} /></span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </RevealOnScroll>
+        </div>
+      </section>
+
+      {/* ── Industries Section — links to /industries/[niche] ─────────────── */}
+      <section className="py-16 md:py-24 px-4 md:px-6 bg-brand-bg">
+        <div className="max-w-[1400px] mx-auto">
+          <RevealOnScroll variant="up">
+            <div className="text-center mb-10">
+              <span className="text-brand-lime font-bold tracking-wider uppercase text-xs md:text-sm mb-2 block">Industries We Serve</span>
+              <h2 className="text-3xl md:text-4xl font-display font-bold text-brand-dark mb-4">
+                Tailored Strategies for Every Industry
+              </h2>
+              <p className="text-gray-500 max-w-2xl mx-auto">
+                We don&apos;t do generic. Our strategies are built around the specific challenges and buyer behaviour of your sector.
+              </p>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 mb-6">
+              {[
+                { slug: 'restaurants',  name: 'Restaurants'  },
+                { slug: 'healthcare',   name: 'Healthcare'   },
+                { slug: 'real-estate',  name: 'Real Estate'  },
+                { slug: 'ecommerce',    name: 'E-commerce'   },
+                { slug: 'startups',     name: 'Startups'     },
+                { slug: 'finance',      name: 'Finance'      },
+                { slug: 'hotels',       name: 'Hotels'       },
+                { slug: 'fitness',      name: 'Fitness'      },
+                { slug: 'technology',   name: 'Technology'   },
+                { slug: 'law-firms',    name: 'Law Firms'    },
+              ].map((ind) => (
+                <Link
+                  key={ind.slug}
+                  href={`/industries/${ind.slug}`}
+                  className="group bg-white rounded-2xl p-4 text-center hover:shadow-lg hover:-translate-y-1 transition-all border border-transparent hover:border-brand-lime/20"
+                >
+                  <p className="font-bold text-brand-dark text-sm group-hover:text-brand-lime transition-colors">{ind.name}</p>
+                </Link>
+              ))}
+            </div>
+            <div className="text-center">
+              <Link href="/industries" className="inline-flex items-center gap-2 font-bold text-brand-dark hover:text-brand-lime transition-colors">
+                View all 20 industries <ArrowRight size={16} />
+              </Link>
+            </div>
+          </RevealOnScroll>
+        </div>
+      </section>
+
+      {/* ── Cities Section — links to /services/seo/[city] etc ────────────── */}
+      <section className="py-16 md:py-20 px-4 md:px-6 bg-white">
+        <div className="max-w-[1400px] mx-auto">
+          <RevealOnScroll variant="up">
+            <div className="text-center mb-10">
+              <span className="text-brand-lime font-bold tracking-wider uppercase text-xs md:text-sm mb-2 block">Global Reach</span>
+              <h2 className="text-3xl md:text-4xl font-display font-bold text-brand-dark mb-4">
+                We Serve Businesses Worldwide
+              </h2>
+              <p className="text-gray-500 max-w-2xl mx-auto">
+                From London to Singapore, our digital marketing and AI strategies work across every market.
+              </p>
+            </div>
+            <div className="flex flex-wrap justify-center gap-3 mb-6">
+              {[
+                { slug: 'london',        name: 'London'       },
+                { slug: 'dubai',         name: 'Dubai'        },
+                { slug: 'new-york',      name: 'New York'     },
+                { slug: 'singapore',     name: 'Singapore'    },
+                { slug: 'toronto',       name: 'Toronto'      },
+                { slug: 'sydney',        name: 'Sydney'       },
+                { slug: 'noida',         name: 'Noida'        },
+                { slug: 'mumbai',        name: 'Mumbai'       },
+                { slug: 'bangalore',     name: 'Bangalore'    },
+                { slug: 'delhi',         name: 'Delhi'        },
+                { slug: 'berlin',        name: 'Berlin'       },
+                { slug: 'amsterdam',     name: 'Amsterdam'    },
+              ].map((city) => (
+                <Link
+                  key={city.slug}
+                  href={`/services/seo/${city.slug}`}
+                  className="px-4 py-2 rounded-full bg-brand-bg border border-gray-200 text-sm font-medium text-gray-600 hover:bg-brand-dark hover:text-white hover:border-brand-dark transition-all"
+                >
+                  {city.name}
+                </Link>
+              ))}
+            </div>
+          </RevealOnScroll>
+        </div>
+      </section>
+
       {/* ── CTA ───────────────────────────────────────────────────────────── */}
       <section className="py-20 md:py-32 px-4 mb-10">
         <RevealOnScroll variant="scale">

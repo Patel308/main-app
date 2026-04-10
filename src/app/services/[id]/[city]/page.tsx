@@ -1,6 +1,7 @@
 // ✅ SERVER COMPONENT — SSG
-// Generates 24 services × 30 cities = 720 static pages at build time.
-// Each page targets "SEO agency in London", "Web Development Dubai" etc.
+// Folder renamed from [service]/[city] → [id]/[city]
+// This fixes: "You cannot use different slug names for the same dynamic path ('id' !== 'service')"
+// URLs are unchanged: /services/seo/london still works perfectly.
 
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
@@ -10,10 +11,10 @@ import ServiceCityClient from './ServiceCityClient';
 
 // ─── 1. Generate all 720 combinations at build time ──────────────────────────
 export async function generateStaticParams() {
-  const params: { service: string; city: string }[] = [];
+  const params: { id: string; city: string }[] = [];
   for (const service of SERVICES) {
     for (const city of CITIES) {
-      params.push({ service: service.id, city: city.slug });
+      params.push({ id: service.id, city: city.slug });
     }
   }
   return params;
@@ -21,9 +22,9 @@ export async function generateStaticParams() {
 
 // ─── 2. Unique metadata per service+city combo ───────────────────────────────
 export async function generateMetadata(
-  { params }: { params: Promise<{ service: string; city: string }> }
+  { params }: { params: Promise<{ id: string; city: string }> }
 ): Promise<Metadata> {
-  const { service: serviceId, city: citySlug } = await params;
+  const { id: serviceId, city: citySlug } = await params;
   const service = SERVICES.find((s) => s.id === serviceId);
   const city = getCityBySlug(citySlug);
 
@@ -62,7 +63,7 @@ export async function generateMetadata(
   };
 }
 
-// ─── 3. JSON-LD for this service+city page ────────────────────────────────────
+// ─── 3. JSON-LD ───────────────────────────────────────────────────────────────
 function ServiceCityJsonLd({
   service, city, serviceId, citySlug,
 }: {
@@ -100,17 +101,16 @@ function ServiceCityJsonLd({
   );
 }
 
-// ─── 4. Page ─────────────────────────────────────────────────────────────────
+// ─── 4. Page ──────────────────────────────────────────────────────────────────
 export default async function ServiceCityPage(
-  { params }: { params: Promise<{ service: string; city: string }> }
+  { params }: { params: Promise<{ id: string; city: string }> }
 ) {
-  const { service: serviceId, city: citySlug } = await params;
+  const { id: serviceId, city: citySlug } = await params;
   const service = SERVICES.find((s) => s.id === serviceId);
   const city = getCityBySlug(citySlug);
 
   if (!service || !city) notFound();
 
-  // Related services for internal linking
   const relatedServices = SERVICES.filter((s) => s.id !== service.id).slice(0, 4);
 
   return (

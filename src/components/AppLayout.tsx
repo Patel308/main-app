@@ -191,14 +191,15 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               </div>
             </div>
 
-            {/* Footer Links */}
-            <div className="flex-grow grid grid-cols-2 md:grid-cols-3 gap-10 w-full lg:w-auto">
+            {/* Footer Links — 4 columns */}
+            <div className="flex-grow grid grid-cols-2 md:grid-cols-4 gap-8 w-full lg:w-auto">
               <div>
                 <h3 className="font-bold text-white mb-6 text-lg">Company</h3>
                 <ul className="space-y-4 text-gray-400">
                   <li><Link href="/" className="hover:text-brand-lime transition-colors">Home</Link></li>
                   <li><Link href="/team" className="hover:text-brand-lime transition-colors">Team</Link></li>
                   <li><Link href="/pricing" className="hover:text-brand-lime transition-colors">Pricing</Link></li>
+                  <li><Link href="/portfolio" className="hover:text-brand-lime transition-colors">Portfolio</Link></li>
                   <li><Link href="/contact" className="hover:text-brand-lime transition-colors">Contact</Link></li>
                 </ul>
               </div>
@@ -207,13 +208,25 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                 <ul className="space-y-4 text-gray-400">
                   <li><Link href="/services/seo" className="hover:text-brand-lime transition-colors">SEO Optimization</Link></li>
                   <li><Link href="/services/ppc-advertising" className="hover:text-brand-lime transition-colors">PPC Ads</Link></li>
-                  <li><Link href="/services/web-dev" className="hover:text-brand-lime transition-colors">Web Dev</Link></li>
-                  <li><Link href="/services/whatsapp-automation" className="hover:text-brand-lime transition-colors">AI Automation</Link></li>
+                  <li><Link href="/services/web-dev" className="hover:text-brand-lime transition-colors">Web Development</Link></li>
+                  <li><Link href="/services/whatsapp-automation" className="hover:text-brand-lime transition-colors">WhatsApp Automation</Link></li>
+                  <li><Link href="/services/ai-voice" className="hover:text-brand-lime transition-colors">AI Voice Agent</Link></li>
+                </ul>
+              </div>
+              <div>
+                <h3 className="font-bold text-white mb-6 text-lg">Industries</h3>
+                <ul className="space-y-4 text-gray-400">
+                  <li><Link href="/industries/restaurants" className="hover:text-brand-lime transition-colors">Restaurants</Link></li>
+                  <li><Link href="/industries/healthcare" className="hover:text-brand-lime transition-colors">Healthcare</Link></li>
+                  <li><Link href="/industries/real-estate" className="hover:text-brand-lime transition-colors">Real Estate</Link></li>
+                  <li><Link href="/industries/ecommerce" className="hover:text-brand-lime transition-colors">E-commerce</Link></li>
+                  <li><Link href="/industries" className="hover:text-brand-lime transition-colors font-medium">All Industries →</Link></li>
                 </ul>
               </div>
               <div className="col-span-2 md:col-span-1">
                 <h3 className="font-bold text-white mb-6 text-lg">Connect</h3>
                 <ul className="space-y-4 text-gray-400">
+                  <li><Link href="/blog" className="hover:text-brand-lime transition-colors">Blog & Resources</Link></li>
                   <li>
                     <a href={SOCIAL_LINKS.linkedin} target="_blank" rel="noreferrer" className="hover:text-brand-lime transition-colors flex items-center gap-2">
                       LinkedIn <ArrowRight size={14} className="-rotate-45 opacity-50" />
