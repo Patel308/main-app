@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { Check, ArrowRight, ChevronDown, ChevronUp } from 'lucide-react';
 import { useState } from 'react';
 import Button from '@/components/Button';
@@ -22,7 +23,10 @@ function FaqItem({ q, a }: { q: string; a: string }) {
         className="w-full flex justify-between items-start gap-4 py-5 text-left"
       >
         <span className="font-medium text-brand-dark text-base">{q}</span>
-        {open ? <ChevronUp size={18} className="shrink-0 text-gray-400 mt-0.5" /> : <ChevronDown size={18} className="shrink-0 text-gray-400 mt-0.5" />}
+        {open
+          ? <ChevronUp size={18} className="shrink-0 text-gray-400 mt-0.5" />
+          : <ChevronDown size={18} className="shrink-0 text-gray-400 mt-0.5" />
+        }
       </button>
       {open && <p className="pb-5 text-gray-500 leading-relaxed">{a}</p>}
     </div>
@@ -137,11 +141,14 @@ export default function IndustryClient({ industry, industryServices, otherIndust
                 href={`/services/${service.id}`}
                 className="group bg-white rounded-[2.5rem] p-6 hover:shadow-2xl transition-all hover:-translate-y-2"
               >
-                <div className="h-48 rounded-[2rem] overflow-hidden mb-5">
-                  <img
-                    src={service.image}
+                {/* ✅ Fixed: next/image replaces raw <img> */}
+                <div className="h-48 rounded-[2rem] overflow-hidden mb-5 relative">
+                  <Image
+                    src={service.image ?? 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800'}
                     alt={service.title}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    fill
+                    className="object-cover transition-transform duration-700 group-hover:scale-110"
+                    unoptimized
                   />
                 </div>
                 <h3 className="text-xl font-bold text-brand-dark mb-2 group-hover:text-brand-lime transition-colors">

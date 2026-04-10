@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowRight, Calendar, Clock, User, Tag } from 'lucide-react';
 import Button from '@/components/Button';
 import type { BlogPost } from '@/data/blog-posts';
@@ -89,8 +90,8 @@ export default function BlogPostClient({ post, relatedService, relatedPosts }: P
           </div>
 
           {/* Hero Image */}
-          <div className="rounded-[2.5rem] overflow-hidden h-[300px] md:h-[460px] mb-12">
-            <img src={post.image} alt={post.title} className="w-full h-full object-cover" />
+          <div className="rounded-[2.5rem] overflow-hidden h-[300px] md:h-[460px] mb-12 relative">
+            <Image src={post.image} alt={post.title} fill className="object-cover" unoptimized />
           </div>
 
           {/* Content */}
@@ -131,8 +132,8 @@ export default function BlogPostClient({ post, relatedService, relatedPosts }: P
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {relatedPosts.map((rp) => (
                   <Link key={rp.slug} href={`/blog/${rp.slug}`} className="group">
-                    <div className="h-44 rounded-2xl overflow-hidden mb-3">
-                      <img src={rp.image} alt={rp.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    <div className="h-44 rounded-2xl overflow-hidden mb-3 relative">
+                      <Image src={rp.image} alt={rp.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" unoptimized />
                     </div>
                     <span className="text-xs font-bold text-brand-lime uppercase tracking-wide">{rp.category}</span>
                     <h3 className="font-bold text-brand-dark mt-1 group-hover:text-brand-lime transition-colors line-clamp-2">{rp.title}</h3>

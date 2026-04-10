@@ -1,7 +1,8 @@
 // ✅ SERVER COMPONENT
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { BLOG_POSTS, BLOG_CATEGORIES } from '@/data/blog-posts';
+import Image from 'next/image';
+import { BLOG_POSTS } from '@/data/blog-posts';
 import { Clock, Calendar, ArrowRight } from 'lucide-react';
 
 export const metadata: Metadata = {
@@ -32,8 +33,8 @@ export default function BlogPage() {
       <section className="px-4 md:px-6 mb-16">
         <div className="max-w-[1400px] mx-auto">
           <Link href={`/blog/${featured.slug}`} className="group grid grid-cols-1 lg:grid-cols-2 gap-8 bg-white rounded-[3rem] overflow-hidden hover:shadow-2xl transition-all">
-            <div className="h-72 lg:h-auto overflow-hidden">
-              <img src={featured.image} alt={featured.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+            <div className="h-72 lg:h-auto overflow-hidden relative">
+              <Image src={featured.image} alt={featured.title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" unoptimized />
             </div>
             <div className="p-8 md:p-12 flex flex-col justify-center">
               <span className="inline-block text-xs font-bold text-brand-lime uppercase tracking-wide mb-3">{featured.category}</span>
@@ -59,8 +60,8 @@ export default function BlogPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             {rest.map((post) => (
               <Link key={post.slug} href={`/blog/${post.slug}`} className="group bg-white rounded-[2rem] overflow-hidden hover:shadow-2xl transition-all hover:-translate-y-2">
-                <div className="h-52 overflow-hidden">
-                  <img src={post.image} alt={post.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                <div className="h-52 overflow-hidden relative">
+                  <Image src={post.image} alt={post.title} fill className="object-cover transition-transform duration-700 group-hover:scale-110" unoptimized />
                 </div>
                 <div className="p-6">
                   <div className="flex items-center gap-2 mb-3">

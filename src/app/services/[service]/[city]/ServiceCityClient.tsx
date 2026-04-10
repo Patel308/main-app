@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { Check, ArrowRight, MapPin, Phone, Mail } from 'lucide-react';
 import Button from '@/components/Button';
 import type { Service } from '@/types/types';
@@ -56,7 +57,7 @@ export default function ServiceCityClient({
               </p>
               <p className="text-gray-500 text-base leading-relaxed mb-8">
                 Scallar IT Solution delivers expert {service.title.toLowerCase()} to businesses
-                in {city.name}, {city.country}. Whether you're a startup or an established brand,
+                in {city.name}, {city.country}. Whether you&apos;re a startup or an established brand,
                 our data-driven approach ensures measurable results.
               </p>
               <div className="flex flex-wrap gap-4">
@@ -71,12 +72,15 @@ export default function ServiceCityClient({
               </div>
             </div>
 
+            {/* ✅ Fixed: next/image replaces raw <img> */}
             <div className="relative">
-              <div className="rounded-[2.5rem] overflow-hidden h-[300px] md:h-[480px]">
-                <img
-                  src={service.image}
+              <div className="rounded-[2.5rem] overflow-hidden h-[300px] md:h-[480px] relative">
+                <Image
+                  src={service.image ?? 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800'}
                   alt={`${service.title} in ${city.name}`}
-                  className="w-full h-full object-cover"
+                  fill
+                  className="object-cover"
+                  unoptimized
                 />
               </div>
             </div>
@@ -212,7 +216,7 @@ export default function ServiceCityClient({
                 </div>
                 <div className="flex items-center gap-3 text-gray-300">
                   <MapPin size={18} className="text-brand-lime shrink-0" />
-                  <span>Serving clients in {city.name} & worldwide</span>
+                  <span>Serving clients in {city.name} &amp; worldwide</span>
                 </div>
               </div>
             </div>
