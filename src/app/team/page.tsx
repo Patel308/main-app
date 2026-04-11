@@ -1,5 +1,6 @@
-// ✅ PURE SERVER COMPONENT — 'use client' removed entirely
+// ✅ PURE SERVER COMPONENT — raw <img> tags replaced with next/image
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import { Linkedin } from 'lucide-react';
 import { TEAM_MEMBERS } from '@/constants';
 import Link from 'next/link';
@@ -16,17 +17,22 @@ export const metadata: Metadata = {
     description: 'Meet the people driving digital growth for businesses across India.',
     type: 'website',
     siteName: 'Scallar IT Solution',
+    images: [{ url: 'https://scallar.in/og-image.png', width: 1200, height: 630 }],
   },
-  alternates: {
-    canonical: 'https://scallar.in/team',
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Our Team | Scallar IT Solution',
+    description: 'Meet the people driving digital growth for businesses across India.',
+    site: '@scallarit',
   },
+  alternates: { canonical: 'https://scallar.in/team' },
 };
 
 export default function TeamPage() {
   return (
     <div className="w-full min-h-screen bg-brand-bg">
 
-      {/* ── Hero ───────────────────────────────────────────────────────────── */}
+      {/* ── Hero ─────────────────────────────────────────────────────────── */}
       <section className="pt-28 pb-12 md:pt-32 md:pb-20 px-6 relative overflow-hidden">
         <div className="max-w-[1400px] mx-auto text-center relative z-10">
           <span className="inline-block py-1 px-3 rounded-full bg-brand-lime/20 text-brand-dark text-xs md:text-sm font-bold tracking-wide uppercase mb-4">
@@ -43,17 +49,21 @@ export default function TeamPage() {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] md:w-[800px] h-[300px] md:h-[800px] bg-brand-lime/5 rounded-full blur-[80px] md:blur-[120px] pointer-events-none" />
       </section>
 
-      {/* ── Founder ────────────────────────────────────────────────────────── */}
+      {/* ── Founder ──────────────────────────────────────────────────────── */}
       <section className="px-4 md:px-6 pb-16 md:pb-24">
         <div className="max-w-[1200px] mx-auto">
           <div className="bg-brand-dark rounded-[2rem] md:rounded-[3rem] p-6 md:p-16 text-white relative overflow-hidden shadow-2xl">
             <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 items-center relative z-10">
               <div className="w-full lg:w-5/12 relative">
-                <div className="aspect-[4/5] rounded-2xl md:rounded-[2rem] overflow-hidden border-4 border-white/10 shadow-2xl max-w-sm mx-auto lg:max-w-none">
-                  <img
+                <div className="aspect-[4/5] rounded-2xl md:rounded-[2rem] overflow-hidden border-4 border-white/10 shadow-2xl max-w-sm mx-auto lg:max-w-none relative">
+                  {/* priority — founder image is above the fold */}
+                  <Image
                     src={TEAM_MEMBERS[0].image}
                     alt={TEAM_MEMBERS[0].name}
-                    className="w-full h-full object-cover object-top"
+                    fill
+                    priority
+                    className="object-cover object-top"
+                    sizes="(max-width: 1024px) 384px, 40vw"
                   />
                 </div>
                 <div className="absolute -bottom-4 -right-2 md:-bottom-6 md:-right-6 bg-brand-lime text-brand-dark p-4 md:p-6 rounded-full shadow-lg scale-75 md:scale-100 origin-bottom-right">
@@ -85,7 +95,7 @@ export default function TeamPage() {
         </div>
       </section>
 
-      {/* ── Team Grid ──────────────────────────────────────────────────────── */}
+      {/* ── Team Grid ────────────────────────────────────────────────────── */}
       <section className="px-4 md:px-6 pb-20">
         <div className="max-w-[1400px] mx-auto">
           <h2 className="text-3xl md:text-4xl font-display font-bold text-brand-dark text-center mb-12">
@@ -94,8 +104,14 @@ export default function TeamPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {TEAM_MEMBERS.slice(1).map((member, idx) => (
               <div key={idx} className="bg-white rounded-[2rem] p-6 text-center hover:shadow-2xl transition-shadow">
-                <div className="aspect-[4/5] rounded-2xl overflow-hidden mb-4">
-                  <img src={member.image} alt={member.name} className="w-full h-full object-cover" />
+                <div className="aspect-[4/5] rounded-2xl overflow-hidden mb-4 relative">
+                  <Image
+                    src={member.image}
+                    alt={member.name}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                  />
                 </div>
                 <h3 className="text-xl font-bold text-brand-dark mb-1">{member.name}</h3>
                 <p className="text-brand-lime text-sm font-bold uppercase tracking-wide mb-3">
@@ -117,7 +133,7 @@ export default function TeamPage() {
         </div>
       </section>
 
-      {/* ── CTA ────────────────────────────────────────────────────────────── */}
+      {/* ── CTA ──────────────────────────────────────────────────────────── */}
       <section className="px-4 md:px-6 pb-20">
         <div className="max-w-[1400px] mx-auto text-center bg-brand-lime rounded-[3rem] p-12 md:p-20">
           <h2 className="text-3xl md:text-4xl font-display font-bold text-brand-dark mb-6">

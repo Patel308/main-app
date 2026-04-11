@@ -2,16 +2,18 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { Check, ArrowRight, ChevronDown, ChevronUp } from 'lucide-react';
+import { Check, ArrowRight, ChevronDown, ChevronUp, Clock, Calendar } from 'lucide-react';
 import { useState } from 'react';
 import Button from '@/components/Button';
 import type { Industry } from '@/data/industries';
 import type { Service } from '@/types/types';
+import type { BlogPost } from '@/data/blog-posts';
 
 interface Props {
   industry: Industry;
   industryServices: Service[];
   otherIndustries: Industry[];
+  relatedBlogPosts: BlogPost[];  // NEW — passed from page.tsx
 }
 
 function FaqItem({ q, a }: { q: string; a: string }) {
@@ -33,7 +35,7 @@ function FaqItem({ q, a }: { q: string; a: string }) {
   );
 }
 
-export default function IndustryClient({ industry, industryServices, otherIndustries }: Props) {
+export default function IndustryClient({ industry, industryServices, otherIndustries, relatedBlogPosts }: Props) {
   return (
     <div className="w-full min-h-screen bg-brand-bg">
 
@@ -141,14 +143,13 @@ export default function IndustryClient({ industry, industryServices, otherIndust
                 href={`/services/${service.id}`}
                 className="group bg-white rounded-[2.5rem] p-6 hover:shadow-2xl transition-all hover:-translate-y-2"
               >
-                {/* ✅ Fixed: next/image replaces raw <img> */}
                 <div className="h-48 rounded-[2rem] overflow-hidden mb-5 relative">
                   <Image
                     src={service.image ?? 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800'}
                     alt={service.title}
                     fill
                     className="object-cover transition-transform duration-700 group-hover:scale-110"
-                    unoptimized
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   />
                 </div>
                 <h3 className="text-xl font-bold text-brand-dark mb-2 group-hover:text-brand-lime transition-colors">
@@ -163,6 +164,58 @@ export default function IndustryClient({ industry, industryServices, otherIndust
           </div>
         </div>
       </section>
+
+      {/* ── Related Blog Posts (cross-linking) ─────────────────────────── */}
+      {relatedBlogPosts.length > 0 && (
+        <section className="py-16 md:py-20 px-4 md:px-6 bg-white">
+          <div className="max-w-[1400px] mx-auto">
+            <h2 className="text-2xl md:text-3xl font-display font-bold text-brand-dark mb-2">
+              Guides &amp; Insights for {industry.name} Businesses
+            </h2>
+            <p className="text-gray-500 mb-10">
+              Expert articles to help {industry.name.toLowerCase()} businesses grow online.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {relatedBlogPosts.map((post) => (
+                <Link
+                  key={post.slug}
+                  href={`/blog/${post.slug}`}
+                  className="group bg-brand-bg rounded-[2rem] overflow-hidden hover:shadow-xl transition-all hover:-translate-y-1"
+                >
+                  <div className="h-44 overflow-hidden relative">
+                    <Image
+                      src={post.image}
+                      alt={post.title}
+                      fill
+                      className="object-cover transition-transform duration-700 group-hover:scale-110"
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                    />
+                  </div>
+                  <div className="p-6">
+                    <div className="flex items-center gap-3 mb-3 text-xs text-gray-400">
+                      <span className="flex items-center gap-1">
+                        <Calendar size={11} />
+                        {new Date(post.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Clock size={11} />
+                        {post.readTime}
+                      </span>
+                    </div>
+                    <h3 className="font-bold text-brand-dark mb-2 leading-tight group-hover:text-brand-lime transition-colors line-clamp-2">
+                      {post.title}
+                    </h3>
+                    <p className="text-gray-500 text-sm line-clamp-2 mb-4">{post.excerpt}</p>
+                    <span className="inline-flex items-center gap-1 text-sm font-bold text-brand-dark group-hover:gap-2 transition-all">
+                      Read Article <ArrowRight size={14} />
+                    </span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ── FAQ ────────────────────────────────────────────────────────── */}
       <section className="py-16 md:py-20 px-4 md:px-6 bg-white">

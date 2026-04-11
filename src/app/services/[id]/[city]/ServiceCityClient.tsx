@@ -1,10 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import { Check, ArrowRight, MapPin, Phone, Mail } from 'lucide-react';
+import Image from 'next/image';
+import { Check, ArrowRight, MapPin, Phone, Mail, Clock, Calendar } from 'lucide-react';
 import Button from '@/components/Button';
 import type { Service } from '@/types/types';
 import type { City } from '@/data/cities';
+import type { BlogPost } from '@/data/blog-posts';
 
 interface Props {
   service: Service;
@@ -12,6 +14,7 @@ interface Props {
   relatedServices: Service[];
   citySlug: string;
   serviceId: string;
+  relatedBlogPosts: BlogPost[];  // NEW — passed from page.tsx
 }
 
 export default function ServiceCityClient({
@@ -20,6 +23,7 @@ export default function ServiceCityClient({
   relatedServices,
   citySlug,
   serviceId,
+  relatedBlogPosts,
 }: Props) {
   return (
     <div className="w-full min-h-screen bg-brand-bg">
@@ -56,7 +60,7 @@ export default function ServiceCityClient({
               </p>
               <p className="text-gray-500 text-base leading-relaxed mb-8">
                 Scallar IT Solution delivers expert {service.title.toLowerCase()} to businesses
-                in {city.name}, {city.country}. Whether you're a startup or an established brand,
+                in {city.name}, {city.country}. Whether you&apos;re a startup or an established brand,
                 our data-driven approach ensures measurable results.
               </p>
               <div className="flex flex-wrap gap-4">
@@ -71,13 +75,21 @@ export default function ServiceCityClient({
               </div>
             </div>
 
+            {/* ✅ Fixed: raw <img> replaced with next/image */}
             <div className="relative">
-              <div className="rounded-[2.5rem] overflow-hidden h-[300px] md:h-[480px]">
-                <img
-                  src={service.image}
-                  alt={`${service.title} in ${city.name}`}
-                  className="w-full h-full object-cover"
-                />
+              <div className="rounded-[2.5rem] overflow-hidden h-[300px] md:h-[480px] relative">
+                {service.image ? (
+                  <Image
+                    src={service.image}
+                    alt={`${service.title} in ${city.name}`}
+                    fill
+                    priority
+                    className="object-cover"
+                    sizes="(max-width: 1024px) 100vw, 50vw"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-brand-bg" />
+                )}
               </div>
             </div>
           </div>
@@ -153,6 +165,58 @@ export default function ServiceCityClient({
         </div>
       </section>
 
+      {/* ── Related Blog Posts (cross-linking) ─────────────────────────── */}
+      {relatedBlogPosts.length > 0 && (
+        <section className="py-16 md:py-20 px-4 md:px-6 bg-white">
+          <div className="max-w-[1400px] mx-auto">
+            <h2 className="text-2xl md:text-3xl font-display font-bold text-brand-dark mb-2">
+              Related Articles for {city.name} Businesses
+            </h2>
+            <p className="text-gray-500 mb-10">
+              Expert guides on {service.title.toLowerCase()} to help your {city.name} business grow.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {relatedBlogPosts.map((post) => (
+                <Link
+                  key={post.slug}
+                  href={`/blog/${post.slug}`}
+                  className="group bg-brand-bg rounded-[2rem] overflow-hidden hover:shadow-xl transition-all hover:-translate-y-1"
+                >
+                  <div className="h-44 overflow-hidden relative">
+                    <Image
+                      src={post.image}
+                      alt={post.title}
+                      fill
+                      className="object-cover transition-transform duration-700 group-hover:scale-110"
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                    />
+                  </div>
+                  <div className="p-6">
+                    <div className="flex items-center gap-3 mb-3 text-xs text-gray-400">
+                      <span className="flex items-center gap-1">
+                        <Calendar size={11} />
+                        {new Date(post.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Clock size={11} />
+                        {post.readTime}
+                      </span>
+                    </div>
+                    <h3 className="font-bold text-brand-dark mb-2 leading-tight group-hover:text-brand-lime transition-colors line-clamp-2">
+                      {post.title}
+                    </h3>
+                    <p className="text-gray-500 text-sm line-clamp-2 mb-4">{post.excerpt}</p>
+                    <span className="inline-flex items-center gap-1 text-sm font-bold text-brand-dark group-hover:gap-2 transition-all">
+                      Read Article <ArrowRight size={14} />
+                    </span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* ── Related Services (internal linking) ────────────────────────── */}
       <section className="py-16 md:py-20 px-4 md:px-6 bg-white">
         <div className="max-w-[1400px] mx-auto">
@@ -212,7 +276,7 @@ export default function ServiceCityClient({
                 </div>
                 <div className="flex items-center gap-3 text-gray-300">
                   <MapPin size={18} className="text-brand-lime shrink-0" />
-                  <span>Serving clients in {city.name} & worldwide</span>
+                  <span>Serving clients in {city.name} &amp; worldwide</span>
                 </div>
               </div>
             </div>

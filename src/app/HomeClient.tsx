@@ -116,13 +116,13 @@ export default function HomeClient() {
           <div className="lg:col-span-7 relative h-[300px] md:h-[600px] hidden lg:block perspective-1000">
             <RevealOnScroll variant="left" className="absolute left-[15%] top-[5%] w-[45%] h-[70%] z-20">
               <div className="w-full h-full rounded-[3rem] overflow-hidden bg-gray-200 shadow-2xl relative group animate-float">
-                <Image
-                  src="https://images.unsplash.com/photo-1590602847861-f357a9332bbc?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+               <Image
+                  src="https://images.unsplash.com/..."
                   alt="Digital Marketing Team at Scallar IT Solution"
-                  fill
+                    fill
+                  priority
                   className="object-cover transition-transform duration-700 group-hover:scale-110"
-                  unoptimized
-                />
+               />
                 <div className="absolute top-8 right-8 w-16 h-16 bg-black rounded-full flex items-center justify-center text-brand-lime animate-pulse-glow shadow-xl">
                   <TrendingUp size={24} />
                 </div>
@@ -135,7 +135,7 @@ export default function HomeClient() {
                   alt="Team Collaboration at Scallar"
                   fill
                   className="object-cover"
-                  unoptimized
+                 
                 />
               </div>
             </RevealOnScroll>
@@ -188,7 +188,7 @@ export default function HomeClient() {
                           alt={service.title}
                           fill
                           className="object-cover transition-transform duration-700 group-hover:scale-110"
-                          unoptimized
+                         
                         />
                       )}
                       <div className="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[10px] md:text-xs font-bold text-brand-dark">
@@ -253,7 +253,7 @@ export default function HomeClient() {
                         alt={project.client}
                         fill
                         className="object-cover transition-transform duration-1000 group-hover:scale-110"
-                        unoptimized
+                       
                       />
                       <div className="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 md:px-4 md:py-2 rounded-full font-bold text-[10px] md:text-xs text-brand-dark shadow-lg">
                         {project.result}
@@ -286,7 +286,7 @@ export default function HomeClient() {
                 alt="Scallar IT Solution Team Collaboration"
                 fill
                 className="object-cover grayscale hover:grayscale-0 transition-all duration-700"
-                unoptimized
+               
               />
             </div>
           </RevealOnScroll>
@@ -335,7 +335,7 @@ export default function HomeClient() {
                     alt="Deepanshu Kumar Prajapati, Founder of Scallar IT Solution"
                     fill
                     className="object-cover object-top"
-                    unoptimized
+                   
                   />
                 </div>
                 <div className="text-center md:text-left">
@@ -380,7 +380,7 @@ export default function HomeClient() {
                           alt={member.name}
                           fill
                           className="object-cover transition-transform duration-700 group-hover:scale-105"
-                          unoptimized
+                         
                         />
                         <div className="absolute bottom-4 left-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-4 group-hover:translate-y-0 flex justify-between items-end">
                           {member.linkedin && (
@@ -447,7 +447,7 @@ export default function HomeClient() {
                     </p>
                     <div className="flex items-center gap-4 mt-auto">
                       <div className="w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden relative bg-gray-200 group-hover:scale-110 transition-transform">
-                        <Image src={t.image} alt={t.name} fill className="object-cover" unoptimized />
+                        <Image src={t.image} alt={t.name} fill className="object-cover" />
                       </div>
                       <div>
                         <h4 className="font-bold text-brand-dark text-xs md:text-sm">{t.name}</h4>
@@ -490,7 +490,7 @@ export default function HomeClient() {
               ].map((post) => (
                 <Link key={post.slug} href={`/blog/${post.slug}`} className="group bg-brand-bg rounded-[2rem] overflow-hidden hover:shadow-xl hover:-translate-y-2 transition-all">
                   <div className="h-48 overflow-hidden relative">
-                    <Image src={post.image} alt={post.title} fill className="object-cover group-hover:scale-110 transition-transform duration-700" unoptimized />
+                    <Image src={post.image} alt={post.title} fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
                   </div>
                   <div className="p-6">
                     <span className="text-xs font-bold text-brand-lime uppercase tracking-wide">{post.category}</span>

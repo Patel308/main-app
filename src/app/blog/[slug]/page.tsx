@@ -1,4 +1,4 @@
-// ✅ SERVER COMPONENT — SSG for all blog posts
+// ✅ SERVER COMPONENT — SSG for all blog posts with BreadcrumbList JSON-LD
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { BLOG_POSTS, getBlogPostBySlug } from '@/data/blog-posts';
@@ -37,10 +37,12 @@ export async function generateMetadata(
       title,
       description: post.excerpt,
       images: [post.image],
+      site: '@scallarit',
     },
   };
 }
 
+// ─── Article JSON-LD ─────────────────────────────────────────────────────────
 function ArticleJsonLd({ post }: { post: ReturnType<typeof getBlogPostBySlug> }) {
   if (!post) return null;
   const jsonLd = {
@@ -61,7 +63,10 @@ function ArticleJsonLd({ post }: { post: ReturnType<typeof getBlogPostBySlug> })
       name: 'Scallar IT Solution',
       logo: { '@type': 'ImageObject', url: 'https://scallar.in/favicon.svg' },
     },
-    mainEntityOfPage: { '@type': 'WebPage', '@id': `https://scallar.in/blog/${post.slug}` },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `https://scallar.in/blog/${post.slug}`,
+    },
   };
   return (
     <script
@@ -71,6 +76,42 @@ function ArticleJsonLd({ post }: { post: ReturnType<typeof getBlogPostBySlug> })
   );
 }
 
+// ─── BreadcrumbList JSON-LD ──────────────────────────────────────────────────
+function BreadcrumbJsonLd({ post }: { post: ReturnType<typeof getBlogPostBySlug> }) {
+  if (!post) return null;
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: 'https://scallar.in',
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Blog',
+        item: 'https://scallar.in/blog',
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: post.title,
+        item: `https://scallar.in/blog/${post.slug}`,
+      },
+    ],
+  };
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+    />
+  );
+}
+
+// ─── Page ────────────────────────────────────────────────────────────────────
 export default async function BlogPostPage(
   { params }: { params: Promise<{ slug: string }> }
 ) {
@@ -78,15 +119,16 @@ export default async function BlogPostPage(
   const post = getBlogPostBySlug(slug);
   if (!post) notFound();
 
-  const relatedService = SERVICES.find((s) => s.id === post.relatedService);
+  const relatedService = SERVICES.find((s) => s.id === post!.relatedService);
   const relatedPosts = BLOG_POSTS.filter(
-    (p) => p.slug !== slug && p.category === post.category
+    (p) => p.slug !== slug && p.category === post!.category
   ).slice(0, 3);
 
   return (
     <>
+      <BreadcrumbJsonLd post={post} />
       <ArticleJsonLd post={post} />
-      <BlogPostClient post={post} relatedService={relatedService} relatedPosts={relatedPosts} />
+      <BlogPostClient post={post!} relatedService={relatedService} relatedPosts={relatedPosts} />
     </>
   );
 }

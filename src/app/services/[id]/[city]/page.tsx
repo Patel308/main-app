@@ -1,12 +1,9 @@
-// ✅ SERVER COMPONENT — SSG
-// Folder renamed from [service]/[city] → [id]/[city]
-// This fixes: "You cannot use different slug names for the same dynamic path ('id' !== 'service')"
-// URLs are unchanged: /services/seo/london still works perfectly.
-
+// ✅ SERVER COMPONENT — SSG 720 city pages with BreadcrumbList + related blog cross-links
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { SERVICES } from '@/constants/constants';
 import { CITIES, getCityBySlug } from '@/data/cities';
+import { BLOG_POSTS } from '@/data/blog-posts';
 import ServiceCityClient from './ServiceCityClient';
 
 // ─── 1. Generate all 720 combinations at build time ──────────────────────────
@@ -27,7 +24,6 @@ export async function generateMetadata(
   const { id: serviceId, city: citySlug } = await params;
   const service = SERVICES.find((s) => s.id === serviceId);
   const city = getCityBySlug(citySlug);
-
   if (!service || !city) return { title: 'Page Not Found' };
 
   const title = `${service.title} in ${city.name} | Scallar IT Solution`;
@@ -59,13 +55,62 @@ export async function generateMetadata(
       card: 'summary_large_image',
       title,
       description,
+      site: '@scallarit',
     },
   };
 }
 
-// ─── 3. JSON-LD ───────────────────────────────────────────────────────────────
+// ─── 3. BreadcrumbList JSON-LD ───────────────────────────────────────────────
+function BreadcrumbJsonLd({
+  service,
+  city,
+  serviceId,
+  citySlug,
+}: {
+  service: { title: string };
+  city: { name: string };
+  serviceId: string;
+  citySlug: string;
+}) {
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://scallar.in' },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Services',
+        item: 'https://scallar.in/services',
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: service.title,
+        item: `https://scallar.in/services/${serviceId}`,
+      },
+      {
+        '@type': 'ListItem',
+        position: 4,
+        name: city.name,
+        item: `https://scallar.in/services/${serviceId}/${citySlug}`,
+      },
+    ],
+  };
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+    />
+  );
+}
+
+// ─── 4. Service JSON-LD ──────────────────────────────────────────────────────
 function ServiceCityJsonLd({
-  service, city, serviceId, citySlug,
+  service,
+  city,
+  serviceId,
+  citySlug,
 }: {
   service: { title: string; description: string; image?: string };
   city: { name: string; country: string };
@@ -92,7 +137,6 @@ function ServiceCityJsonLd({
     },
     ...(service.image && { image: service.image }),
   };
-
   return (
     <script
       type="application/ld+json"
@@ -101,32 +145,49 @@ function ServiceCityJsonLd({
   );
 }
 
-// ─── 4. Page ──────────────────────────────────────────────────────────────────
+// ─── 5. Page ─────────────────────────────────────────────────────────────────
 export default async function ServiceCityPage(
   { params }: { params: Promise<{ id: string; city: string }> }
 ) {
   const { id: serviceId, city: citySlug } = await params;
   const service = SERVICES.find((s) => s.id === serviceId);
   const city = getCityBySlug(citySlug);
-
   if (!service || !city) notFound();
 
-  const relatedServices = SERVICES.filter((s) => s.id !== service.id).slice(0, 4);
+  const relatedServices = SERVICES.filter((s) => s.id !== service!.id).slice(0, 4);
+
+  // Cross-link: 3 blog posts related to this service
+  const relatedBlogPosts = BLOG_POSTS.filter(
+    (p) => p.relatedService === serviceId
+  ).slice(0, 3);
+
+  // Fallback: if no exact match, get posts from same category
+  const blogPosts =
+    relatedBlogPosts.length > 0
+      ? relatedBlogPosts
+      : BLOG_POSTS.slice(0, 3);
 
   return (
     <>
+      <BreadcrumbJsonLd
+        service={service!}
+        city={city!}
+        serviceId={serviceId}
+        citySlug={citySlug}
+      />
       <ServiceCityJsonLd
-        service={service}
-        city={city}
+        service={service!}
+        city={city!}
         serviceId={serviceId}
         citySlug={citySlug}
       />
       <ServiceCityClient
-        service={service}
-        city={city}
+        service={service!}
+        city={city!}
         relatedServices={relatedServices}
         citySlug={citySlug}
         serviceId={serviceId}
+        relatedBlogPosts={blogPosts}
       />
     </>
   );

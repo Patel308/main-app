@@ -1,5 +1,5 @@
 'use client';
-
+import Image from 'next/image';
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Mic, MicOff, Power, ChevronDown, Loader2, Phone, X } from 'lucide-react';
@@ -109,7 +109,7 @@ export default function ChatWidget({ isEmbed = false }: ChatWidgetProps) {
             <div className={`${HEADER_BG} px-5 py-4 flex justify-between items-center relative z-20 shrink-0 h-[72px]`}>
                 <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-white/10 shadow-sm shrink-0">
-                        <img src={AVATAR_URL} alt="Agent" className="w-full h-full object-cover" />
+                        <Image src={AVATAR_URL} alt="Monika AI Agent" fill className="object-cover" sizes="40px" />
                     </div>
                     <div className="flex flex-col justify-center">
                         <h3 className="text-white font-semibold text-[15px] leading-tight tracking-wide">Talk to us!</h3>
@@ -156,7 +156,7 @@ export default function ChatWidget({ isEmbed = false }: ChatWidgetProps) {
                                          playsInline muted loop
                                      />
                                  ) : (
-                                     <img src={AVATAR_URL} alt="Agent" className="w-full h-full object-cover" />
+                                     <Image src={AVATAR_URL} alt="Monika AI Agent" fill className={`object-cover transition-transform duration-500 ${isModelSpeaking ? 'scale-110' : 'scale-100'}`} sizes="128px"/>
                                  )}
                               </div>
                         </div>
@@ -243,7 +243,7 @@ export default function ChatWidget({ isEmbed = false }: ChatWidgetProps) {
             className={`group relative w-16 h-16 md:w-[70px] md:h-[70px] rounded-full overflow-hidden border-[4px] border-white shadow-[0_8px_30px_rgba(0,0,0,0.15)] hover:scale-105 transition-all duration-300 ${HEADER_BG} active:scale-95`}
             aria-label="Open Chat"
         >
-            <img src={AVATAR_URL} alt="Monika AI" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-90" />
+            <Image src={AVATAR_URL} alt="Chat with Monika AI" fill className="object-cover transition-transform duration-700 group-hover:scale-110 opacity-90" sizes="70px" />
             
             <div className="absolute top-1.5 right-1.5 flex h-3.5 w-3.5">
                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
