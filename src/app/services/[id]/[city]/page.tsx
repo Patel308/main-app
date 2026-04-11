@@ -1,10 +1,14 @@
 // ✅ SERVER COMPONENT — SSG 720 city pages with BreadcrumbList + related blog cross-links
+// ISR: pages revalidate every 30 days — avoids 20-min build times at scale
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { SERVICES } from '@/constants/constants';
 import { CITIES, getCityBySlug } from '@/data/cities';
 import { BLOG_POSTS } from '@/data/blog-posts';
 import ServiceCityClient from './ServiceCityClient';
+
+// ─── ISR: revalidate every 30 days instead of full SSG rebuild ───────────────
+export const revalidate = 2592000; // 30 days in seconds
 
 // ─── 1. Generate all 720 combinations at build time ──────────────────────────
 export async function generateStaticParams() {
@@ -39,9 +43,18 @@ export async function generateMetadata(
       `${service.title.toLowerCase()} company ${city.name.toLowerCase()}`,
       `${city.name.toLowerCase()} ${service.title.toLowerCase()} services`,
       'scallar it solution',
-    ].join(', '),
+    ],
     alternates: {
       canonical: `https://scallar.in/services/${serviceId}/${citySlug}`,
+      languages: (() => {
+        const langs: Record<string, string> = { 'x-default': `https://scallar.in/services/${serviceId}/${citySlug}` };
+        if (city.country === 'United Kingdom') langs['en-GB'] = `https://scallar.in/services/${serviceId}/${citySlug}`;
+        if (city.country === 'United States')  langs['en-US'] = `https://scallar.in/services/${serviceId}/${citySlug}`;
+        if (city.country === 'Australia')       langs['en-AU'] = `https://scallar.in/services/${serviceId}/${citySlug}`;
+        if (city.country === 'Canada')          langs['en-CA'] = `https://scallar.in/services/${serviceId}/${citySlug}`;
+        if (city.country === 'India')           langs['en-IN'] = `https://scallar.in/services/${serviceId}/${citySlug}`;
+        return langs;
+      })(),
     },
     openGraph: {
       title,

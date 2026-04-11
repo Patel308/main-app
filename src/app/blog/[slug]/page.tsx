@@ -20,7 +20,7 @@ export async function generateMetadata(
   return {
     title,
     description: post.excerpt,
-    keywords: post.tags.join(', '),
+    keywords: post.tags,
     alternates: { canonical: `https://scallar.in/blog/${slug}` },
     openGraph: {
       title,
@@ -51,17 +51,30 @@ function ArticleJsonLd({ post }: { post: ReturnType<typeof getBlogPostBySlug> })
     headline: post.title,
     description: post.excerpt,
     image: post.image,
+    url: `https://scallar.in/blog/${post.slug}`,
     datePublished: post.date,
     dateModified: post.date,
+    wordCount: post.content.split(' ').length,
     author: {
       '@type': 'Person',
       name: post.author,
-      worksFor: { '@type': 'Organization', name: 'Scallar IT Solution' },
+      url: 'https://scallar.in/team',
+      worksFor: {
+        '@type': 'Organization',
+        name: 'Scallar IT Solution',
+        url: 'https://scallar.in',
+      },
     },
     publisher: {
       '@type': 'Organization',
       name: 'Scallar IT Solution',
-      logo: { '@type': 'ImageObject', url: 'https://scallar.in/favicon.svg' },
+      url: 'https://scallar.in',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://scallar.in/og-image.png',
+        width: 1200,
+        height: 630,
+      },
     },
     mainEntityOfPage: {
       '@type': 'WebPage',

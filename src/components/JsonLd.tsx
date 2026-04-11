@@ -3,7 +3,6 @@
 // No 'use client' needed — this is pure static markup.
 
 interface LocalBusinessJsonLdProps {
-  /** Override defaults for specific pages if needed */
   url?: string;
 }
 
@@ -48,10 +47,9 @@ export function LocalBusinessJsonLd({ url = 'https://scallar.in' }: LocalBusines
       },
     ],
     sameAs: [
-      'https://www.linkedin.com/company/scallar-it-solution',
+      'https://www.linkedin.com/company/109103450',
       'https://www.instagram.com/scallarit',
-      'https://twitter.com/scallarit',
-      'https://www.facebook.com/scallarit',
+      'https://www.facebook.com/profile.php?id=61579444817950',
     ],
     priceRange: '₹₹',
     currenciesAccepted: 'INR',
@@ -68,12 +66,7 @@ export function LocalBusinessJsonLd({ url = 'https://scallar.in' }: LocalBusines
         { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Branding & Design' } },
       ],
     },
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: '4.9',
-      reviewCount: '230',
-      bestRating: '5',
-    },
+    // ⚠️  aggregateRating removed — only add back when you have verified Google Business Profile reviews
   };
 
   return (
@@ -150,6 +143,67 @@ export function PricingFaqJsonLd() {
     ],
   };
 
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+    />
+  );
+}
+
+// ─── Organization schema (B2B / Knowledge Panel) ─────────────────────────────
+export function OrganizationJsonLd() {
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    '@id': 'https://scallar.in/#organization',
+    name: 'Scallar IT Solution',
+    url: 'https://scallar.in',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://scallar.in/og-image.png',
+      width: 1200,
+      height: 630,
+    },
+    contactPoint: {
+      '@type': 'ContactPoint',
+      telephone: '+91-8510806031',
+      contactType: 'customer service',
+      areaServed: 'IN',
+      availableLanguage: ['English', 'Hindi'],
+    },
+    sameAs: [
+      'https://www.linkedin.com/company/109103450',
+      'https://www.instagram.com/scallarit',
+      'https://www.facebook.com/profile.php?id=61579444817950',
+    ],
+  };
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+    />
+  );
+}
+
+// ─── WebSite schema with SearchAction (Sitelinks Searchbox) ──────────────────
+export function WebSiteJsonLd() {
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    '@id': 'https://scallar.in/#website',
+    name: 'Scallar IT Solution',
+    url: 'https://scallar.in',
+    publisher: { '@id': 'https://scallar.in/#organization' },
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: {
+        '@type': 'EntryPoint',
+        urlTemplate: 'https://scallar.in/blog?q={search_term_string}',
+      },
+      'query-input': 'required name=search_term_string',
+    },
+  };
   return (
     <script
       type="application/ld+json"

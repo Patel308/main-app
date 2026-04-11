@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { Inter, Space_Grotesk } from 'next/font/google';
 import './globals.css';
 import ClientLayout from '@/components/AppLayout';
-import { LocalBusinessJsonLd } from '@/components/JsonLd';
+import { LocalBusinessJsonLd, OrganizationJsonLd, WebSiteJsonLd } from '@/components/JsonLd';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 const spaceGrotesk = Space_Grotesk({ subsets: ['latin'], variable: '--font-display' });
@@ -14,9 +14,20 @@ export const metadata: Metadata = {
   },
   description:
     "Scallar IT Solution is Noida's premier Digital Marketing & AI Agency. We scale businesses with SEO, Web Development, Google Ads, and Custom AI Automation. Get a free audit today.",
-  keywords:
-    'digital marketing agency noida, ai automation services india, seo company delhi ncr, web development agency, whatsapp automation business, growth marketing expert, lead generation services',
+  keywords: [
+    'digital marketing agency noida',
+    'ai automation services india',
+    'seo company delhi ncr',
+    'web development agency',
+    'whatsapp automation business',
+    'growth marketing expert',
+    'lead generation services',
+  ],
   metadataBase: new URL('https://scallar.in'),
+  // ── Google Search Console verification ──────────────────────────────────────
+  // Get your code from GSC → Settings → Ownership verification → HTML tag
+  // Then replace PASTE_YOUR_GSC_CODE_HERE with the actual content= value
+  // verification: { google: 'PASTE_YOUR_GSC_CODE_HERE' },
   openGraph: {
     title: 'Scallar IT Solution | AI-Driven Digital Marketing Agency',
     description:
@@ -26,7 +37,7 @@ export const metadata: Metadata = {
     siteName: 'Scallar IT Solution',
     images: [
       {
-        url: '/og-image.png',       // ← place a 1200×630 image at public/og-image.png
+        url: '/og-image.png',
         width: 1200,
         height: 630,
         alt: 'Scallar IT Solution — AI-Driven Digital Marketing Agency',
@@ -35,7 +46,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    site: '@scallarit',       // ← ADDED
+    site: '@scallarit',
     creator: '@scallarit',
     title: 'Scallar IT Solution | AI-Driven Digital Marketing Agency',
     description:
@@ -53,8 +64,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <head>
-        {/* LocalBusiness JSON-LD — injected on every page */}
+        {/* Structured data — on every page */}
         <LocalBusinessJsonLd />
+        <OrganizationJsonLd />
+        <WebSiteJsonLd />
       </head>
       <body className={`${inter.variable} ${spaceGrotesk.variable}`}>
         <ClientLayout>{children}</ClientLayout>

@@ -1,22 +1,10 @@
-'use client';
+import type { Metadata } from 'next';
+import MonikaClient from './MonikaClient';
 
-import { useEffect } from 'react';
-import ChatWidget from '@/components/ChatWidget';
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
 
-export default function EmbedPage() {
-  useEffect(() => {
-    document.body.classList.add('embed-mode');
-    document.body.style.backgroundColor = 'transparent';
-    return () => {
-      document.body.classList.remove('embed-mode');
-    };
-  }, []);
-
-  return (
-    <div className="fixed inset-0 bg-transparent overflow-hidden flex items-end justify-end pointer-events-none">
-      <div className="pointer-events-auto">
-        <ChatWidget isEmbed={true} />
-      </div>
-    </div>
-  );
+export default function MonikaEmbedPage() {
+  return <MonikaClient />;
 }

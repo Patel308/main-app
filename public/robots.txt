@@ -1,4 +1,6 @@
 User-agent: *
 Disallow: /admin
+Disallow: /monika-embed
 Allow: /
+
 Sitemap: https://scallar.in/sitemap.xml

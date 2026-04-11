@@ -31,7 +31,7 @@ export async function generateMetadata(
       `${service.title.toLowerCase()} india`,
       'scallar it solution',
       ...service.features.map((f) => f.toLowerCase()),
-    ].join(', '),
+    ],
     alternates: { canonical: `https://scallar.in/services/${id}` },
     openGraph: {
       title,

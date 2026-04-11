@@ -1,5 +1,6 @@
 'use client';
 import Image from 'next/image';
+import dynamic from 'next/dynamic';
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
@@ -7,7 +8,9 @@ import { usePathname } from 'next/navigation';
 import { Menu, X, ArrowRight, Linkedin, Instagram, Facebook } from 'lucide-react';
 import { NAV_LINKS } from '@/constants';
 import Button from '@/components/Button';
-import ChatWidget from '@/components/ChatWidget';
+
+// ✅ Lazy load ChatWidget — avoids blocking initial page render
+const ChatWidget = dynamic(() => import('@/components/ChatWidget'), { ssr: false });
 
 const SOCIAL_LINKS = {
   linkedin:  'https://www.linkedin.com/company/109103450',
