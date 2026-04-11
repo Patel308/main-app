@@ -22,6 +22,8 @@ ENV NEXT_TELEMETRY_DISABLED=1
 
 RUN npm run build
 
+
+
 # ─────────────────────────────────────────
 # Stage 3: Lean production image
 # ─────────────────────────────────────────
