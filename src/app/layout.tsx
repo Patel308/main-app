@@ -3,7 +3,7 @@ import { Inter, Space_Grotesk } from 'next/font/google';
 import './globals.css';
 import ClientLayout from '@/components/AppLayout';
 import { LocalBusinessJsonLd, OrganizationJsonLd, WebSiteJsonLd } from '@/components/JsonLd';
-
+import type { Viewport } from 'next';
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 const spaceGrotesk = Space_Grotesk({ subsets: ['latin'], variable: '--font-display' });
 
@@ -58,6 +58,14 @@ export const metadata: Metadata = {
     follow: true,
     googleBot: { index: true, follow: true, 'max-image-preview': 'large' },
   },
+};
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#FFFFFF' },
+    { media: '(prefers-color-scheme: dark)',  color: '#050505' },
+  ],
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
