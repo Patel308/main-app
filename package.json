@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "deploy": "git add -A && git commit -m \"deploy: $(date '+%Y-%m-%d %H:%M')\" && git push origin main"
+
   },
   "dependencies": {
     "@google/genai": "^1.48.0",
