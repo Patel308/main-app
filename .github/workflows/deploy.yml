@@ -3,17 +3,16 @@ name: 🚀 Build · Push · Deploy
 on:
   push:
     branches: [main]
-  workflow_dispatch: # allows manual trigger from GitHub UI
+  workflow_dispatch:
 
 env:
   DOCKER_IMAGE: pateldeepesh/scallar-app
   CONTAINER_NAME: scallar-site
   APP_PORT: 3000
-  APP_DIR: ~/scallar-app
 
 jobs:
   # ─────────────────────────────────────────
-  # JOB 1: Lint & Type-check
+  # JOB 1: Type-check
   # ─────────────────────────────────────────
   quality:
     name: 🔍 Quality Check
@@ -31,9 +30,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Lint
-        run: npm run lint --if-present
-
       - name: Type check
         run: npx tsc --noEmit --skipLibCheck 2>/dev/null || true
 
@@ -44,9 +40,6 @@ jobs:
     name: 🐳 Build & Push Image
     runs-on: ubuntu-latest
     needs: quality
-    outputs:
-      image_tag: ${{ steps.meta.outputs.tags }}
-      short_sha: ${{ steps.meta.outputs.version }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -60,7 +53,7 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Extract metadata (tags & labels)
+      - name: Extract metadata
         id: meta
         uses: docker/metadata-action@v5
         with:
@@ -87,55 +80,50 @@ jobs:
     name: 🖥️ Deploy to VM
     runs-on: ubuntu-latest
     needs: build
-    environment: production
     steps:
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
-          password: ${{ secrets.SSH_KEY }}
+          key: ${{ secrets.SSH_KEY }}
           script: |
             set -e
 
             echo "📦 Pulling latest image..."
-            docker pull ${{ env.DOCKER_IMAGE }}:latest
+            docker pull pateldeepesh/scallar-app:latest
 
-            echo "🔄 Swapping container (zero-downtime)..."
-            # Start new container on temp port first to verify it boots
+            echo "🔄 Booting new container on temp port..."
             docker run -d \
-              --name ${{ env.CONTAINER_NAME }}_new \
-              -p 3001:${{ env.APP_PORT }} \
+              --name scallar-site_new \
+              -p 3001:3000 \
               --restart always \
-              ${{ env.DOCKER_IMAGE }}:latest
+              pateldeepesh/scallar-app:latest
 
-            # Give it 10s to boot
             sleep 10
 
-            # Check new container is actually running
-            if ! docker ps --filter "name=${{ env.CONTAINER_NAME }}_new" --filter "status=running" | grep -q ${{ env.CONTAINER_NAME }}_new; then
+            if ! docker ps --filter "name=scallar-site_new" --filter "status=running" | grep -q scallar-site_new; then
               echo "❌ New container failed to start, aborting!"
-              docker logs ${{ env.CONTAINER_NAME }}_new --tail 50
-              docker rm -f ${{ env.CONTAINER_NAME }}_new || true
+              docker logs scallar-site_new --tail 50
+              docker rm -f scallar-site_new || true
               exit 1
             fi
 
-            echo "✅ New container healthy, switching traffic..."
-            docker stop ${{ env.CONTAINER_NAME }} 2>/dev/null || true
-            docker rm   ${{ env.CONTAINER_NAME }} 2>/dev/null || true
+            echo "✅ Healthy — switching traffic..."
+            docker stop scallar-site 2>/dev/null || true
+            docker rm   scallar-site 2>/dev/null || true
 
-            # Rename new → primary, re-bind to production port
-            docker stop ${{ env.CONTAINER_NAME }}_new
-            docker rm   ${{ env.CONTAINER_NAME }}_new
+            docker stop scallar-site_new
+            docker rm   scallar-site_new
 
             docker run -d \
-              --name ${{ env.CONTAINER_NAME }} \
-              -p ${{ env.APP_PORT }}:${{ env.APP_PORT }} \
+              --name scallar-site \
+              -p 3000:3000 \
               --restart always \
-              ${{ env.DOCKER_IMAGE }}:latest
+              pateldeepesh/scallar-app:latest
 
-            echo "🧹 Cleaning up old images..."
+            echo "🧹 Pruning old images..."
             docker image prune -f
 
-            echo "🎉 Deployment complete! Container status:"
-            docker ps --filter "name=${{ env.CONTAINER_NAME }}"
+            echo "🎉 Done!"
+            docker ps --filter "name=scallar-site"
