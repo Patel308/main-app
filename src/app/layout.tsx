@@ -35,6 +35,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
+    site: '@scallarit',       // ← ADDED
+    creator: '@scallarit',
     title: 'Scallar IT Solution | AI-Driven Digital Marketing Agency',
     description:
       'Transform your online presence with data-driven SEO, PPC, and AI automation. Book a free consultation today.',

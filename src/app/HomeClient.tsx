@@ -117,7 +117,7 @@ export default function HomeClient() {
             <RevealOnScroll variant="left" className="absolute left-[15%] top-[5%] w-[45%] h-[70%] z-20">
               <div className="w-full h-full rounded-[3rem] overflow-hidden bg-gray-200 shadow-2xl relative group animate-float">
                <Image
-                  src="https://images.unsplash.com/..."
+                  src="https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=800&q=80"
                   alt="Digital Marketing Team at Scallar IT Solution"
                     fill
                   priority

@@ -20,6 +20,8 @@ const nextConfig: NextConfig = {
       { source: '/why-choose-us', destination: '/', permanent: true },
       { source: '/digital-marketing', destination: '/services/digital-marketing', permanent: true },
       { source: '/resources', destination: '/blog', permanent: true },
+      { source: '/resources',          destination: '/blog', permanent: true },
+      { source: '/resources/:path*',   destination: '/blog/:path*', permanent: true },
     ];
   },
 };
