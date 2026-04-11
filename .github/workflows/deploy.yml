@@ -90,6 +90,10 @@ jobs:
           script: |
             set -e
 
+            echo "🧹 Cleaning up any leftover containers..."
+            docker rm -f scallar-site_new 2>/dev/null || true
+            docker rm -f scallar-site 2>/dev/null || true
+
             echo "📦 Pulling latest image..."
             docker pull pateldeepesh/scallar-app:latest
 
@@ -110,9 +114,6 @@ jobs:
             fi
 
             echo "✅ Healthy — switching traffic..."
-            docker stop scallar-site 2>/dev/null || true
-            docker rm   scallar-site 2>/dev/null || true
-
             docker stop scallar-site_new
             docker rm   scallar-site_new
 
