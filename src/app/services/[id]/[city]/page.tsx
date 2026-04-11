@@ -1,5 +1,6 @@
-// ✅ SERVER COMPONENT — SSG 720 city pages with BreadcrumbList + related blog cross-links
-// ISR: pages revalidate every 30 days — avoids 20-min build times at scale
+// ✅ SERVER COMPONENT — ISR city pages with complete hreflang for all 15 countries
+// ISR: revalidates every 30 days — avoids OOM on GCloud/Cloud Run at scale
+// hreflang: full coverage for UK, US, AU, CA, IN, UAE, SG, DE, NL, IE, HK, MY, NZ, ZA
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { SERVICES } from '@/constants/constants';
@@ -7,21 +8,51 @@ import { CITIES, getCityBySlug } from '@/data/cities';
 import { BLOG_POSTS } from '@/data/blog-posts';
 import ServiceCityClient from './ServiceCityClient';
 
-// ─── ISR: revalidate every 30 days instead of full SSG rebuild ───────────────
+// ─── ISR: revalidate every 30 days ───────────────────────────────────────────
+// On GCloud Cloud Run / any Docker host this works identically to Vercel ISR
+// because Next.js standalone output handles the revalidation cache internally.
+// First request after 30d regenerates the page server-side, then caches it again.
 export const revalidate = 2592000; // 30 days in seconds
 
-// ─── 1. Generate all 720 combinations at build time ──────────────────────────
+// ─── Complete country → BCP-47 language tag map ──────────────────────────────
+// All 15 countries covered in your cities.ts file.
+// Add new entries here whenever you add a new country to cities.ts.
+const COUNTRY_LANG: Record<string, string> = {
+  'United Kingdom': 'en-GB',
+  'United States':  'en-US',
+  'Australia':      'en-AU',
+  'Canada':         'en-CA',
+  'India':          'en-IN',
+  // ── Previously missing — now fixed ──────────────────────────────────────
+  'UAE':            'en-AE',
+  'Singapore':      'en-SG',
+  'Germany':        'de-DE',
+  'Netherlands':    'nl-NL',
+  'Ireland':        'en-IE',
+  'Hong Kong':      'en-HK',
+  'Malaysia':       'en-MY',
+  'New Zealand':    'en-NZ',
+  'South Africa':   'en-ZA',
+};
+
+// ─── 1. Generate all city×service combos at build time ───────────────────────
+// With ISR enabled above, only the TOP_BUILD_CITIES are pre-rendered at build.
+// All other combos are generated on first request, then cached for 30 days.
+// This prevents OOM on GCloud Cloud Run (which has a 32GB memory ceiling per instance).
+const TOP_BUILD_CITIES = [
+  'london', 'new-york', 'dubai', 'singapore', 'mumbai',
+  'sydney', 'toronto', 'noida', 'delhi', 'bangalore',
+];
+
 export async function generateStaticParams() {
-  const params: { id: string; city: string }[] = [];
-  for (const service of SERVICES) {
-    for (const city of CITIES) {
-      params.push({ id: service.id, city: city.slug });
-    }
-  }
-  return params;
+  // Pre-render only the top 10 cities × all services at build time (~240 pages).
+  // All other city pages are ISR — generated on first request.
+  return SERVICES.flatMap((service) =>
+    TOP_BUILD_CITIES.map((city) => ({ id: service.id, city }))
+  );
 }
 
-// ─── 2. Unique metadata per service+city combo ───────────────────────────────
+// ─── 2. Unique metadata + full hreflang per service+city combo ───────────────
 export async function generateMetadata(
   { params }: { params: Promise<{ id: string; city: string }> }
 ): Promise<Metadata> {
@@ -32,6 +63,14 @@ export async function generateMetadata(
 
   const title = `${service.title} in ${city.name} | Scallar IT Solution`;
   const description = `Looking for ${service.title.toLowerCase()} in ${city.name}? Scallar IT Solution delivers expert ${service.title.toLowerCase()} for businesses in ${city.name}, ${city.country}. Get a free consultation today.`;
+  const pageUrl = `https://scallar.in/services/${serviceId}/${citySlug}`;
+
+  // Build hreflang — x-default always present, lang tag added if country is mapped
+  const langCode = COUNTRY_LANG[city.country];
+  const languages: Record<string, string> = {
+    'x-default': pageUrl,
+    ...(langCode ? { [langCode]: pageUrl } : {}),
+  };
 
   return {
     title,
@@ -45,24 +84,17 @@ export async function generateMetadata(
       'scallar it solution',
     ],
     alternates: {
-      canonical: `https://scallar.in/services/${serviceId}/${citySlug}`,
-      languages: (() => {
-        const langs: Record<string, string> = { 'x-default': `https://scallar.in/services/${serviceId}/${citySlug}` };
-        if (city.country === 'United Kingdom') langs['en-GB'] = `https://scallar.in/services/${serviceId}/${citySlug}`;
-        if (city.country === 'United States')  langs['en-US'] = `https://scallar.in/services/${serviceId}/${citySlug}`;
-        if (city.country === 'Australia')       langs['en-AU'] = `https://scallar.in/services/${serviceId}/${citySlug}`;
-        if (city.country === 'Canada')          langs['en-CA'] = `https://scallar.in/services/${serviceId}/${citySlug}`;
-        if (city.country === 'India')           langs['en-IN'] = `https://scallar.in/services/${serviceId}/${citySlug}`;
-        return langs;
-      })(),
+      canonical: pageUrl,
+      languages,
     },
     openGraph: {
       title,
       description,
       type: 'website',
-      url: `https://scallar.in/services/${serviceId}/${citySlug}`,
+      url: pageUrl,
       siteName: 'Scallar IT Solution',
-      images: service.image ? [{ url: service.image, width: 800, height: 600 }] : [],
+      // Dynamic OG image from opengraph-image.tsx in /services/[id]/ folder
+      // Next.js auto-wires this — no manual images[] needed here
     },
     twitter: {
       card: 'summary_large_image',
@@ -89,25 +121,10 @@ function BreadcrumbJsonLd({
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://scallar.in' },
-      {
-        '@type': 'ListItem',
-        position: 2,
-        name: 'Services',
-        item: 'https://scallar.in/services',
-      },
-      {
-        '@type': 'ListItem',
-        position: 3,
-        name: service.title,
-        item: `https://scallar.in/services/${serviceId}`,
-      },
-      {
-        '@type': 'ListItem',
-        position: 4,
-        name: city.name,
-        item: `https://scallar.in/services/${serviceId}/${citySlug}`,
-      },
+      { '@type': 'ListItem', position: 1, name: 'Home',     item: 'https://scallar.in' },
+      { '@type': 'ListItem', position: 2, name: 'Services', item: 'https://scallar.in/services' },
+      { '@type': 'ListItem', position: 3, name: service.title, item: `https://scallar.in/services/${serviceId}` },
+      { '@type': 'ListItem', position: 4, name: city.name,  item: `https://scallar.in/services/${serviceId}/${citySlug}` },
     ],
   };
   return (
@@ -169,12 +186,10 @@ export default async function ServiceCityPage(
 
   const relatedServices = SERVICES.filter((s) => s.id !== service!.id).slice(0, 4);
 
-  // Cross-link: 3 blog posts related to this service
   const relatedBlogPosts = BLOG_POSTS.filter(
     (p) => p.relatedService === serviceId
   ).slice(0, 3);
 
-  // Fallback: if no exact match, get posts from same category
   const blogPosts =
     relatedBlogPosts.length > 0
       ? relatedBlogPosts
