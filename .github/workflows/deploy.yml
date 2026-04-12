@@ -111,7 +111,7 @@ jobs:
             sleep 5
 
             echo "🔍 Verifying container is up..."
-            curl -sf http://localhost:3010 > /dev/null && echo "✅ Site is live!" || {
+            curl -sfL http://localhost:3010 > /dev/null && echo "✅ Site is live!" || {
               echo "❌ Site not responding! Logs:"
               docker logs scallar-site --tail 50
               exit 1
