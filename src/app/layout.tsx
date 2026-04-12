@@ -4,6 +4,9 @@ import './globals.css';
 import ClientLayout from '@/components/AppLayout';
 import { LocalBusinessJsonLd, OrganizationJsonLd, WebSiteJsonLd } from '@/components/JsonLd';
 import type { Viewport } from 'next';
+// 1. Import the Script component from Next.js
+import Script from 'next/script';
+
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 const spaceGrotesk = Space_Grotesk({ subsets: ['latin'], variable: '--font-display' });
 
@@ -24,10 +27,19 @@ export const metadata: Metadata = {
     'lead generation services',
   ],
   metadataBase: new URL('https://scallar.in'),
-  // ── Google Search Console verification ──────────────────────────────────────
-  // Get your code from GSC → Settings → Ownership verification → HTML tag
-  // Then replace PASTE_YOUR_GSC_CODE_HERE with the actual content= value
-  // verification: { google: 'PASTE_YOUR_GSC_CODE_HERE' },
+
+  // ── Favicon & Icons ──────────────────────────────────────────────────────────
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/logo.png', type: 'image/png', sizes: '512x512' },
+    ],
+    apple: [
+      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+    ],
+    shortcut: '/favicon.ico',
+  },
+
   openGraph: {
     title: 'Scallar IT Solution | AI-Driven Digital Marketing Agency',
     description:
@@ -59,12 +71,13 @@ export const metadata: Metadata = {
     googleBot: { index: true, follow: true, 'max-image-preview': 'large' },
   },
 };
+
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   themeColor: [
     { media: '(prefers-color-scheme: light)', color: '#FFFFFF' },
-    { media: '(prefers-color-scheme: dark)',  color: '#050505' },
+    { media: '(prefers-color-scheme: dark)', color: '#050505' },
   ],
 };
 
@@ -72,6 +85,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <head>
+        {/* 2. GA4 Scripts added here */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-Y8BC9QB4QH"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-Y8BC9QB4QH');
+          `}
+        </Script>
+
         {/* Structured data — on every page */}
         <LocalBusinessJsonLd />
         <OrganizationJsonLd />

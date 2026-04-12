@@ -160,10 +160,10 @@ export function OrganizationJsonLd() {
     name: 'Scallar IT Solution',
     url: 'https://scallar.in',
     logo: {
-      '@type': 'ImageObject',
-      url: 'https://scallar.in/og-image.png',
-      width: 1200,
-      height: 630,
+        '@type': 'ImageObject',
+         url: 'https://scallar.in/logo.png',
+         width: 512,
+         height: 512,
     },
     contactPoint: {
       '@type': 'ContactPoint',

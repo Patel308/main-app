@@ -10,7 +10,7 @@ import { NAV_LINKS } from '@/constants';
 import Button from '@/components/Button';
 
 // ✅ Lazy load ChatWidget — avoids blocking initial page render
-const ChatWidget = dynamic(() => import('@/components/ChatWidget'), { ssr: false });
+//const ChatWidget = dynamic(() => import('@/components/ChatWidget'), { ssr: false });
 
 const SOCIAL_LINKS = {
   linkedin:  'https://www.linkedin.com/company/109103450',
@@ -140,7 +140,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <main className="flex-grow pt-20 md:pt-24">
         {children}
       </main>
-      <ChatWidget isEmbed={false} />
+{/*     <ChatWidget isEmbed={false} /> */}
 
       {/* ── Footer ──────────────────────────────────────────────────────── */}
       <footer className="bg-[#050505] text-white pt-20 pb-10 rounded-t-[2.5rem] md:rounded-t-[4rem] mt-20 mx-0 md:mx-4 relative overflow-hidden shadow-2xl">

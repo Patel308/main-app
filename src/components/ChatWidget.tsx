@@ -45,6 +45,23 @@ export default function ChatWidget({ isEmbed = false }: ChatWidgetProps) {
     }
   }, [modelVolume, isModelSpeaking, isConnected]);
 
+  // ── Close handler — works for both embed and normal mode ──────────────────
+  const handleClose = () => {
+  try {
+    geminiService.disconnectLive();
+  } catch (e) {
+    console.error('disconnect error:', e);
+  }
+  setIsConnected(false);
+  setIsConnecting(false);
+  setModelVolume(0);
+
+  if (isEmbed) {
+    window.parent.postMessage({ type: 'MONIKA_CLOSE' }, '*');
+  } else {
+    setIsOpen(false);
+  }
+   };
   const handleStartCall = async () => {
     if (!isOpen) { setIsOpen(true); return; }
     setIsConnecting(true);
@@ -60,15 +77,11 @@ export default function ChatWidget({ isEmbed = false }: ChatWidgetProps) {
         setModelVolume(0);
       },
       onUserSpeaking: (vol) => { setUserVolume(vol); },
-      onModelSpeaking: (speaking) => { 
-        setIsModelSpeaking(speaking); 
-      },
+      onModelSpeaking: (speaking) => { setIsModelSpeaking(speaking); },
       onModelVolume: (vol) => setModelVolume(vol),
       onNavigation: (path) => !isEmbed && router.push(path),
       onHighlight: (id) => window.dispatchEvent(new CustomEvent('highlight-service', { detail: { id } })),
-      onTranscript: (text, isUser) => {
-        setCurrentTranscript(text);
-      },
+      onTranscript: (text, isUser) => { setCurrentTranscript(text); },
       onError: () => { 
         setIsConnected(false); 
         setIsConnecting(false); 
@@ -100,7 +113,7 @@ export default function ChatWidget({ isEmbed = false }: ChatWidgetProps) {
 
   return (
     <div className={`${containerClasses} flex flex-col items-end transition-all duration-300 font-sans`}>
-      {isOpen && (
+      {(isOpen || isEmbed) && (
         <div className={`
             bg-white flex flex-col relative overflow-hidden transition-all duration-300 ease-out shadow-2xl
             ${isEmbed ? 'w-full h-full rounded-none' : 'w-full h-[100dvh] sm:w-[360px] sm:h-[600px] sm:max-h-[85vh] sm:rounded-[20px] rounded-none border-0 sm:border border-gray-200 animate-in slide-in-from-bottom-5 fade-in'}
@@ -121,13 +134,13 @@ export default function ChatWidget({ isEmbed = false }: ChatWidgetProps) {
                         </div>
                     </div>
                 </div>
+                {/* Close button — always visible, works in both embed and normal mode */}
                 <button 
-                  onClick={() => setIsOpen(false)} 
+                  onClick={handleClose}
                   className="w-8 h-8 rounded-full bg-white/5 text-white/70 hover:bg-white/10 hover:text-white flex items-center justify-center transition-all active:scale-90"
                   aria-label="Close Chat"
                 >
-                  <ChevronDown size={22} className="sm:block hidden" />
-                  <X size={22} className="sm:hidden block" />
+                  <X size={22} />
                 </button>
             </div>
 
@@ -237,7 +250,7 @@ export default function ChatWidget({ isEmbed = false }: ChatWidgetProps) {
         </div>
       )}
 
-      {!isOpen && (
+      {!isOpen && !isEmbed && (
         <button
             onClick={() => setIsOpen(true)}
             className={`group relative w-16 h-16 md:w-[70px] md:h-[70px] rounded-full overflow-hidden border-[4px] border-white shadow-[0_8px_30px_rgba(0,0,0,0.15)] hover:scale-105 transition-all duration-300 ${HEADER_BG} active:scale-95`}
