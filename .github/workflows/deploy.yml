@@ -87,7 +87,6 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
-          envs: DOCKERHUB_USERNAME,DOCKERHUB_TOKEN
           script: |
             set -e
 
@@ -95,7 +94,7 @@ jobs:
             docker rm -f scallar-site 2>/dev/null || true
 
             echo "🔐 Logging into Docker Hub..."
-            echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+            echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
             echo "📦 Pulling latest image..."
             docker pull pateldeepesh/scallar-app:latest
