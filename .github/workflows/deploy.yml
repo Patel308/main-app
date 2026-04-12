@@ -91,7 +91,7 @@ jobs:
           script: |
             set -e
 
-            echo "🧹 Cleaning up any leftover containers..."
+            echo "🧹 Cleaning up leftover containers..."
             docker rm -f scallar-site_new 2>/dev/null || true
             docker rm -f scallar-site 2>/dev/null || true
 
@@ -101,23 +101,24 @@ jobs:
             echo "📦 Pulling latest image..."
             docker pull pateldeepesh/scallar-app:latest
 
-            echo "🔄 Booting new container on temp port..."
+            echo "🔄 Booting canary container on temp port 3011..."
             docker run -d \
               --name scallar-site_new \
               -p 3011:3000 \
               --restart always \
               pateldeepesh/scallar-app:latest
 
-            sleep 10
+            echo "⏳ Waiting 20s for app to boot..."
+            sleep 20
 
             if ! docker ps --filter "name=scallar-site_new" --filter "status=running" | grep -q scallar-site_new; then
-              echo "❌ New container failed to start, aborting!"
-              docker logs scallar-site_new --tail 50
+              echo "❌ Canary failed to start! Logs:"
+              docker logs scallar-site_new --tail 80
               docker rm -f scallar-site_new || true
               exit 1
             fi
 
-            echo "✅ Healthy — switching traffic..."
+            echo "✅ Canary healthy — promoting to production port 3010..."
             docker stop scallar-site_new
             docker rm   scallar-site_new
 
@@ -130,5 +131,5 @@ jobs:
             echo "🧹 Pruning old images..."
             docker image prune -f
 
-            echo "🎉 Done!"
+            echo "🎉 Deployment complete!"
             docker ps --filter "name=scallar-site"
