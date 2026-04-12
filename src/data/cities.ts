@@ -7,6 +7,7 @@ export interface City {
   phone: string;
 }
 
+
 export const CITIES: City[] = [
   // UK
   { slug: 'london',       name: 'London',       country: 'United Kingdom', region: 'England',          currency: 'GBP', phone: '+44' },
