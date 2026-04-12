@@ -92,7 +92,6 @@ jobs:
             set -e
 
             echo "🧹 Cleaning up leftover containers..."
-            docker rm -f scallar-site_new 2>/dev/null || true
             docker rm -f scallar-site 2>/dev/null || true
 
             echo "🔐 Logging into Docker Hub..."
@@ -108,12 +107,13 @@ jobs:
               --restart always \
               pateldeepesh/scallar-app:latest
 
+            echo "⏳ Waiting for app to boot..."
             sleep 5
 
-            echo "🔍 Checking container health..."
-            docker inspect -f '{{.State.Running}}' scallar-site | grep -q true || {
-              echo "❌ Container not running! Logs:"
-              docker logs scallar-site --tail 80
+            echo "🔍 Verifying container is up..."
+            curl -sf http://localhost:3010 > /dev/null && echo "✅ Site is live!" || {
+              echo "❌ Site not responding! Logs:"
+              docker logs scallar-site --tail 50
               exit 1
             }
 
