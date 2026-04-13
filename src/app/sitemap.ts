@@ -1,10 +1,12 @@
-// ✅ Dynamic sitemap — auto-covers all 700+ pages
-// Includes: static pages + 24 service pages + 720 city pages + 20 industry pages + 20 blog posts
+// ✅ Dynamic sitemap — auto-covers all 800+ pages
+// Includes: static pages + 24 services + 720 city pages + 20 industries + blog posts + 50 tools
+
 import type { MetadataRoute } from 'next';
 import { SERVICES } from '@/constants/constants';
 import { CITIES } from '@/data/cities';
 import { INDUSTRIES } from '@/data/industries';
 import { BLOG_POSTS } from '@/data/blog-posts';
+import { TOOLS } from '@/data/tools';
 
 const BASE = 'https://scallar.in';
 const now = new Date();
@@ -13,17 +15,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   // ── Static pages ──────────────────────────────────────────────────────────
   const staticPages: MetadataRoute.Sitemap = [
-    { url: BASE,                    lastModified: now, changeFrequency: 'weekly',  priority: 1.0 },
-    { url: `${BASE}/services`,      lastModified: now, changeFrequency: 'weekly',  priority: 0.9 },
-    { url: `${BASE}/industries`,    lastModified: now, changeFrequency: 'weekly',  priority: 0.9 },
-    { url: `${BASE}/blog`,          lastModified: now, changeFrequency: 'daily',   priority: 0.9 },
-    { url: `${BASE}/pricing`,       lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
-    { url: `${BASE}/portfolio`,     lastModified: now, changeFrequency: 'weekly',  priority: 0.8 },
-    { url: `${BASE}/team`,          lastModified: now, changeFrequency: 'monthly', priority: 0.7 },
-    { url: `${BASE}/resources`,     lastModified: now, changeFrequency: 'weekly',  priority: 0.7 },
-    { url: `${BASE}/contact`,       lastModified: now, changeFrequency: 'yearly',  priority: 0.6 },
-    { url: `${BASE}/privacy`,       lastModified: now, changeFrequency: 'yearly',  priority: 0.3 },
-    { url: `${BASE}/terms`,         lastModified: now, changeFrequency: 'yearly',  priority: 0.3 },
+    { url: BASE,                     lastModified: now, changeFrequency: 'weekly',  priority: 1.0 },
+    { url: `${BASE}/services`,       lastModified: now, changeFrequency: 'weekly',  priority: 0.9 },
+    { url: `${BASE}/industries`,     lastModified: now, changeFrequency: 'weekly',  priority: 0.9 },
+    { url: `${BASE}/blog`,           lastModified: now, changeFrequency: 'daily',   priority: 0.9 },
+    { url: `${BASE}/tools`,          lastModified: now, changeFrequency: 'weekly',  priority: 0.9 },
+    { url: `${BASE}/pricing`,        lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${BASE}/portfolio`,      lastModified: now, changeFrequency: 'weekly',  priority: 0.8 },
+    { url: `${BASE}/about`,          lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${BASE}/team`,           lastModified: now, changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${BASE}/contact`,        lastModified: now, changeFrequency: 'yearly',  priority: 0.6 },
+    { url: `${BASE}/privacy`,        lastModified: now, changeFrequency: 'yearly',  priority: 0.3 },
+    { url: `${BASE}/terms`,          lastModified: now, changeFrequency: 'yearly',  priority: 0.3 },
   ];
 
   // ── Service detail pages (24) ─────────────────────────────────────────────
@@ -60,5 +63,20 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.7,
   }));
 
-  return [...staticPages, ...servicePages, ...cityPages, ...industryPages, ...blogPages];
+  // ── Tool pages (50) ───────────────────────────────────────────────────────
+  const toolPages: MetadataRoute.Sitemap = TOOLS.map((t) => ({
+    url: `${BASE}/tools/${t.slug}`,
+    lastModified: now,
+    changeFrequency: 'monthly' as const,
+    priority: 0.75,
+  }));
+
+  return [
+    ...staticPages,
+    ...servicePages,
+    ...cityPages,
+    ...industryPages,
+    ...blogPages,
+    ...toolPages,
+  ];
 }
