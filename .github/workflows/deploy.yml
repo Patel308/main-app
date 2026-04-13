@@ -1,8 +1,144 @@
+# name: 🚀 Build · Push · Deploy
+
+# on:
+#   push:
+#     branches: [main]
+#   workflow_dispatch:
+
+# env:
+#   DOCKER_IMAGE: pateldeepesh/scallar-app
+#   CONTAINER_NAME: scallar-site
+#   APP_PORT: 3010
+
+# jobs:
+#   # ─────────────────────────────────────────
+#   # JOB 1: Type-check
+#   # ─────────────────────────────────────────
+#   quality:
+#     name: 🔍 Quality Check
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout
+#         uses: actions/checkout@v4
+
+#       - name: Setup Node
+#         uses: actions/setup-node@v4
+#         with:
+#           node-version: 20
+#           cache: npm
+
+#       - name: Install dependencies
+#         run: npm ci
+
+#       - name: Type check
+#         run: npx tsc --noEmit --skipLibCheck 2>/dev/null || true
+
+#   # ─────────────────────────────────────────
+#   # JOB 2: Build & Push Docker image
+#   # ─────────────────────────────────────────
+#   build:
+#     name: 🐳 Build & Push Image
+#     runs-on: ubuntu-latest
+#     needs: quality
+#     steps:
+#       - name: Checkout
+#         uses: actions/checkout@v4
+
+#       - name: Set up Docker Buildx
+#         uses: docker/setup-buildx-action@v3
+
+#       - name: Login to Docker Hub
+#         uses: docker/login-action@v3
+#         with:
+#           username: ${{ secrets.DOCKERHUB_USERNAME }}
+#           password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+#       - name: Extract metadata
+#         id: meta
+#         uses: docker/metadata-action@v5
+#         with:
+#           images: ${{ env.DOCKER_IMAGE }}
+#           tags: |
+#             type=raw,value=latest,enable={{is_default_branch}}
+#             type=sha,prefix=sha-,format=short
+
+#       - name: Build and push
+#         uses: docker/build-push-action@v5
+#         with:
+#           context: .
+#           push: true
+#           tags: ${{ steps.meta.outputs.tags }}
+#           labels: ${{ steps.meta.outputs.labels }}
+#           cache-from: type=gha
+#           cache-to: type=gha,mode=max
+#           platforms: linux/amd64
+
+#   # ─────────────────────────────────────────
+#   # JOB 3: Deploy to VM
+#   # ─────────────────────────────────────────
+#   deploy:
+#     name: 🖥️ Deploy to VM
+#     runs-on: ubuntu-latest
+#     needs: build
+#     steps:
+#       - name: Deploy via SSH
+#         uses: appleboy/ssh-action@v1.0.3
+#         with:
+#           host: ${{ secrets.SSH_HOST }}
+#           username: ${{ secrets.SSH_USERNAME }}
+#           key: ${{ secrets.SSH_KEY }}
+#           script: |
+#             set -e
+
+#             echo "🧹 Cleaning up leftover containers..."
+#             docker rm -f scallar-site 2>/dev/null || true
+
+#             echo "🔐 Logging into Docker Hub..."
+#             echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
+#             echo "📦 Pulling latest image..."
+#             docker pull pateldeepesh/scallar-app:latest
+
+#             echo "🔄 Starting container..."
+#             docker run -d \
+#               --name scallar-site \
+#               -p 3010:3000 \
+#               --restart always \
+#               pateldeepesh/scallar-app:latest
+
+#             echo "⏳ Waiting for app to boot..."
+#             sleep 5
+
+#             echo "🔍 Verifying container is up..."
+#             curl -sfL http://localhost:3010 > /dev/null && echo "✅ Site is live!" || {
+#               echo "❌ Site not responding! Logs:"
+#               docker logs scallar-site --tail 50
+#               exit 1
+#             }
+
+#             echo "🧹 Pruning old images..."
+#             docker image prune -f
+
+#             echo "🎉 Deployment complete!"
+#             docker ps --filter "name=scallar-site"
+
+
 name: 🚀 Build · Push · Deploy
+
+# ═══════════════════════════════════════════════════════════════
+# TRIGGER CONFIGURATION
+# ═══════════════════════════════════════════════════════════════
+# Only triggers on:
+#  1. Push to MAIN branch (production deployment)
+#  2. Manual workflow_dispatch (for re-deployments)
+# 
+# Dev branches (feature/*, dev/*) will NOT trigger this workflow
+# ═══════════════════════════════════════════════════════════════
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main  # ⚠️ PRODUCTION ONLY - Keep this strict
   workflow_dispatch:
 
 env:
@@ -33,6 +169,9 @@ jobs:
       - name: Type check
         run: npx tsc --noEmit --skipLibCheck 2>/dev/null || true
 
+      - name: Lint check (optional)
+        run: npm run lint 2>/dev/null || echo "⚠️ No lint script found"
+
   # ─────────────────────────────────────────
   # JOB 2: Build & Push Docker image
   # ─────────────────────────────────────────
@@ -61,6 +200,7 @@ jobs:
           tags: |
             type=raw,value=latest,enable={{is_default_branch}}
             type=sha,prefix=sha-,format=short
+            type=ref,event=branch
 
       - name: Build and push
         uses: docker/build-push-action@v5
@@ -74,12 +214,14 @@ jobs:
           platforms: linux/amd64
 
   # ─────────────────────────────────────────
-  # JOB 3: Deploy to VM
+  # JOB 3: Deploy to VM (MAIN ONLY)
   # ─────────────────────────────────────────
   deploy:
     name: 🖥️ Deploy to VM
     runs-on: ubuntu-latest
     needs: build
+    # Safety check: Only deploy from main branch
+    if: github.ref == 'refs/heads/main'
     steps:
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.0.3
@@ -89,6 +231,10 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             set -e
+
+            echo "════════════════════════════════════"
+            echo "  🚀 DEPLOYING TO PRODUCTION (main)"
+            echo "════════════════════════════════════"
 
             echo "🧹 Cleaning up leftover containers..."
             docker rm -f scallar-site 2>/dev/null || true
@@ -110,14 +256,18 @@ jobs:
             sleep 5
 
             echo "🔍 Verifying container is up..."
-            curl -sfL http://localhost:3010 > /dev/null && echo "✅ Site is live!" || {
+            if curl -sfL http://localhost:3010 > /dev/null; then
+              echo "✅ Site is live! http://scallar.in"
+            else
               echo "❌ Site not responding! Logs:"
               docker logs scallar-site --tail 50
               exit 1
-            }
+            fi
 
             echo "🧹 Pruning old images..."
             docker image prune -f
 
-            echo "🎉 Deployment complete!"
+            echo "════════════════════════════════════"
+            echo "  🎉 DEPLOYMENT COMPLETE!"
+            echo "════════════════════════════════════"
             docker ps --filter "name=scallar-site"
