@@ -1,5 +1,5 @@
-
 import { Service, CaseStudy, BookingSlot, Resource, TeamMember } from '../types/types';
+
 export const NAV_LINKS = [
   { name: 'Home',       path: '/'           },
   { name: 'Services',   path: '/services'   },

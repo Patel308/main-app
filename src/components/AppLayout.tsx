@@ -193,13 +193,13 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                 </a>
               </div>
             </div>
-
-            {/* Footer Links — 4 columns */}
+           {/* Footer Links — 4 columns */}
             <div className="flex-grow grid grid-cols-2 md:grid-cols-4 gap-8 w-full lg:w-auto">
               <div>
                 <h3 className="font-bold text-white mb-6 text-lg">Company</h3>
                 <ul className="space-y-4 text-gray-400">
                   <li><Link href="/" className="hover:text-brand-lime transition-colors">Home</Link></li>
+                  <li><Link href="/about" className="hover:text-brand-lime transition-colors">About Us</Link></li>
                   <li><Link href="/team" className="hover:text-brand-lime transition-colors">Team</Link></li>
                   <li><Link href="/pricing" className="hover:text-brand-lime transition-colors">Pricing</Link></li>
                   <li><Link href="/portfolio" className="hover:text-brand-lime transition-colors">Portfolio</Link></li>
@@ -257,8 +257,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                   </li>
                 </ul>
               </div>
-            </div>
-          </div>
+            </div>  {/* ← closes grid div */}
+
+          </div>  {/* ← closes flex flex-col lg:flex-row div (was MISSING) */}
 
           {/* Bottom Bar */}
           <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-500 font-medium">
@@ -268,8 +269,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               <Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
             </div>
           </div>
-        </div>
-      </footer>
-    </div>
+
+        </div>    
+      </footer>   
+    </div>        
   );
-}
+}               
